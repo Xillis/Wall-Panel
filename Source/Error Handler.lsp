@@ -11,9 +11,9 @@
 
 ;;system variable value capture Function
 (defun CWL-SVVCF ( sysvar / oldvar)
-	(foreach var sysvar
-		(setq oldvar (append oldvar (list (list(nth 0 var) (getvar (nth 0 var))))))
-		(setvar (nth 0 var) (nth 1 var))
-	)
-oldvar
+		(foreach var sysvar
+			(setq oldvar (append oldvar (list (list(nth 0 var) (getvar (nth 0 var))))))
+			(setvar (nth 0 var) (nth 1 var))
+		)
+	oldvar
 )
