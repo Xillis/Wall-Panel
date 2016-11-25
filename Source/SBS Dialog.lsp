@@ -1,16 +1,5 @@
-;;Dialog Pass through Function
-(defun SBS-PANEL-DIA ( DIA-Name / DIA-ID DIA_State)
-	(setq DIA_ID (load_dialog "SBS-Dialog.dcl"))
-	(IF (NOT (new_dialog DIA-Name DIA_ID))
-		(EXIT)
-		(eval (list(read DIA-name)))
-	)
-	(setq DIA_State (start_dialog))
-	(unload_dialog DIA_ID)
-)
 
-;; Test
-(defun SBS_WallProperties ()
+(defun SBS_WallProperties ( / Wallpoints Dflag)
 	(setq
 		width (dimx_tile "Wimage")
 		hight (dimy_tile "Wimage")
@@ -22,5 +11,19 @@
 		(vector_image 5 25 30 35 7)
 		(vector_image 30 35 55 25 7)
 	(end_image)
+	(action_tile "Ppoints" "(Done_dialog 3))")
+	(action_tile "accept"
+		"(PRINT \"accept\")"
+	)
+	(action_tile "cancel"
+		(strcat 
+			"(done_dialog 0)"
+			"(exit)"
+		)
+	)
+	(setq Dflag (start_dialog))
+	(cond
+			((= DFlag 3) (setq Wallpoints (SBS_Wallpoints)))
+	)
 )
 

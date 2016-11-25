@@ -17,3 +17,13 @@
 		)
 	oldvar
 )
+
+;;Dialog Pass through Function
+(defun CWL-PANEL-DIA ( DIA-Name / DIA-ID )
+	(setq DIA_ID (load_dialog "SBS-Dialog.dcl"))
+	(IF (NOT (new_dialog DIA-Name DIA_ID))
+		(EXIT)
+		(eval (list(read DIA-name)))
+	)
+	(unload_dialog DIA_ID)
+)
