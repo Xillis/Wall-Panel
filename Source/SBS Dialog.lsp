@@ -1,17 +1,7 @@
 
-(defun SBS_WallProperties ( / Wallpoints Dflag)
-	(setq
-		width (dimx_tile "Wimage")
-		hight (dimy_tile "Wimage")
-	)
-	(start_image "Wimage")
-		(fill_image 0 0 width hight 250)
-		(vector_image 5 5 30 15 7)
-		(vector_image 30 15 55 5 7)
-		(vector_image 5 25 30 35 7)
-		(vector_image 30 35 55 25 7)
-	(end_image)
+(defun SBS_WallProperties ( Dflag / Wpoints Dflag )
 	(action_tile "Ppoints" "(Done_dialog 3))")
+	(action_tile "Spoly" "(Done_dialog 4))")
 	(action_tile "accept"
 		"(PRINT \"accept\")"
 	)
@@ -23,7 +13,9 @@
 	)
 	(setq Dflag (start_dialog))
 	(cond
-			((= DFlag 3) (setq Wallpoints (SBS_Wallpoints)))
+			((= DFlag 3) (setq Wpoints (SBS_Wallpoints)))
+			((= Dflag 4) (setq Wpoints (CWL-PPOINTS)))
 	)
+	Dflag
 )
 

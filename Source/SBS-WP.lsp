@@ -3,22 +3,22 @@
 	;; set working environment
 	(setq oldvar (CWL-SVVCF (list '("CMDECHO" 0) '("OSMODE" 16384))))
 	;;Dialog Function
-	(CWL-PANEL-DIA "SBS_WallProperties")
+	(CWL-PANEL-DIA "SBS_WallProperties" "M")
 	;; re-set original working environment
 	(CWL-SVVCF oldvar)
+	(PRINT "END WP")
 )	
 
 ;;Wall points selection function
-(DEFUN SBS_Wallpoints ( / POINT WPLIST )
-	(print "start Wall Points")
+(DEFUN SBS_Wallpoints ( / WPOINT WPLIST )
 	(SETQ WPOINT (GETPOINT "\nSelect the base point on the start side of the wall"))
-	(print WPOINT)
 	(SETQ WPLIST (list WPOINT))
-	(print WPLIST)
 	(WHILE (/= WPOINT nil)
 		(SETQ WPOINT (GETPOINT WPOINT "\nselect the next point"))
-		(SETQ WPLIST (append WPLIST (list WPOINT)))
-		(print WPOINT)
-		(print WPLIST)
+		(IF (/= WPOINT nil)
+			(SETQ WPLIST (append WPLIST (list WPOINT)))
+		)
 	)
+	(print WPlist)
+	WPLIST
 )
