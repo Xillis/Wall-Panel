@@ -1,7 +1,7 @@
 ;;wall creation function for Steelway building systems
 (DEFUN C:SBS-WP (/ oldvar )
 	;; set working environment
-	(setq oldvar (CWL-SVVCF (list '("CMDECHO" 0) '("OSMODE" 16384))))
+	(setq oldvar (CWL-SVVCF (list '("CMDECHO" 0) ;|'("OSMODE" 16384)|;)))
 	;;Dialog Function
 	(CWL-PANEL-DIA "SBS_WallProperties" "M")
 	;; re-set original working environment
@@ -21,4 +21,9 @@
 	)
 	(print WPlist)
 	WPLIST
+)
+
+;;Wall Point calculations
+(DEFUN c:test ( Points / )
+	
 )
