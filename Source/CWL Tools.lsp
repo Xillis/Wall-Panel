@@ -8,17 +8,20 @@
 ;;	(setq *error* set in list passed from main function TBD
 )
 
-;;system variable value capture Function
+;;sets specified sys vars to values specified and returns the old values in a list
 (defun CWL-SVVCF ( sysvar / oldvar)
-		(foreach var sysvar
-			(setq oldvar (append oldvar (list (list(nth 0 var) (getvar (nth 0 var))))))
-			(setvar (nth 0 var) (nth 1 var))
-		)
+	(print "start CWL-SVVCF")
+	(foreach var sysvar
+		(setq oldvar (append oldvar (list (list(nth 0 var) (getvar (nth 0 var))))))
+		(setvar (nth 0 var) (nth 1 var))
+	)
+	(print "end CWL-SVVCF")
 	oldvar
 )
 
-;;Dialog Pass through Function
-(defun CWL-PANEL-DIA ( DIA-Name DIA-M / DIA-ID )
+;;locats and starts a dialogue specified and executes a function of the same name 
+(defun CWL-START-DIA ( DIA-Name DIA-M / DIA-ID )
+	(print "start CWL-START_DIA")
 	(setq DIA_ID (load_dialog "SBS-Dialog.dcl"))
 	(cond
 		((= DIA-M "M")
@@ -29,7 +32,6 @@
 						(EXIT)
 						(SETQ DFLAG (eval (list(read DIA-name) DFLAG )))
 					)
-					(PRINT DFLAG)
 				)
 			)
 		)
@@ -43,10 +45,12 @@
 		)
 	)
 	(unload_dialog DIA_ID)
+	(print "end CWL-START_DIA")
 )
 
-;; extract points from a Polyline
+;; extract points from a Polyline and returns a list of the points 
 (defun CWL-PPOINTS ( / Pline PPoints CK )
+	(print "start CWL-PPOINTS")
 	(while (/= CK "LWPOLYLINE")
 		(setq Pline (entget (car (entsel "Select Polyline:"))))
 		(setq CK (cdr (assoc 0 pline)))
@@ -61,13 +65,13 @@
 			)
 		)
 	)
-	(print PPoints)
+	(print "end CWL-PPOINTS")
 	PPoints
 )
 
-;;finds the specified point of a list of points and returns that point
+;;finds the Left or right most points sorted by upper or lower "LL, UL, LR, UR" and returns a list sorted with the specified pint as the first point 
 (defun CWL-FPOINT ( PList SP / SList CNT PList SP e1 e2 TPOINT)
-	(PRINT "START POINT SORT")
+	(PRINT "start CWL-FPOINT")
 	(SETQ Slist(vl-sort-i PList
 		(function
 			(lambda (e1 e2)
@@ -100,5 +104,28 @@
 			PLIST (APPEND PLIST TPOINT)
 		)
 	)
-	(PRINT PLIST)
+	(PRINT "end CWL-FPOINT")
+	PLIST
+)
+
+;;subtracts a list of points by the number specified with x,y,z
+(defun CWL-ALIST ( x1 y1 z2 Plist / pf )
+	(print "start CWL-ALIST")
+	(foreach p Plist
+		(setq pf (cons (list (- (car p) x1) (- (cadr p) y1) (- (caddr p) z1)) pf))
+	)
+	(setq pf (reverse pf))
+	(print "end CWL-ALIST")
+	pf
+)
+
+;;return 2 adjacent points in a list and loop to the first point if at the end of the list
+(defun CWL-2POINT (PLIST LOC / 2POINT)
+(print "start CWL-2POINT")
+	(IF (= (NTH (1+ LOC) PList) nil)
+		(SETQ 2POINT (LIST (NTH LOC PLIST)(CAR PLIST)))
+		(SETQ 2POINT (LIST (NTH LOC PLIST)(NTH (1+ LOC) PLIST)))
+	)
+	(print "end CWL-2POINT")
+	2Point
 )
