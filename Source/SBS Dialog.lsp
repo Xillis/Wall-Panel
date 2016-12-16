@@ -1,18 +1,25 @@
 ;;Wall Properties dialog function
-(defun SBS_WallProperties ( Dflag / Wpoints Dflag )
+(defun SBS_WallProperties ( PassTrough / Wpoints PassTrough DFlag )
 	(print "start SBS_WallProperties")
+	(if (/= (setq Wpoints (assoc "Wall Points" PassTrough)) nil)
+		(setq Wpoints (cadr Wpoints))
+	)
 	(start_image "Wimage") 
 		(fill_image 0 0 
 			(dimx_tile "Wimage")
 			(dimy_tile "Wimage")
 			-15
 		)
-		(vector_image  0  0
-			(dimx_tile "Wimage")
-			(dimy_tile "Wimage")
-			-16
+		(if (/= Wpoints nil)
+			(SBS-WImage Wpoints)
 		)
+;;		(vector_image  0  0
+;;			(dimx_tile "Wimage")
+;;			(dimy_tile "Wimage")
+;;			-16
+;;		)
 	(end_image)
+;;	(SBS-WImage Wpoints)
 	(action_tile "Ppoints" "(Done_dialog 3)")
 	(action_tile "Spoly" "(Done_dialog 4)")
 	(action_tile "accept"
@@ -24,22 +31,21 @@
 	(action_tile "cancel"
 		(strcat 
 			"(print \"cancel\")
+			(exit)
 			(done_dialog 0)"
 		)
 	)
-	(setq Dflag (start_dialog))
+	(setq DFlag (start_dialog))
 	(cond
 		((= DFlag 3) 
-			(setq Wpoints (SBS_Wallpoints))
-			(SBS-WImage Wpoints)
+			(setq Wpoints (list (SBS_Wallpoints)))
 		)
-		((= Dflag 4)
-			(setq Wpoints (CWL-FPOINT (CWL-PPOINTS) "LL"))
-			(SBS-WImage Wpoints)
+		((= DFlag 4)
+			(setq Wpoints (list (CWL-FPOINT (CWL-PPOINTS) "LL")))
 		)
 	)
 	(print "end SBS_WallProperties")
-	Dflag
+	(cons (list "DFlag" DFlag) (list (append '("Wall Points") Wpoints))) 
 )
 
 ;;Wall image calculations
@@ -52,10 +58,8 @@
 	)
 	(setq IPList (CWL-ALIST x1 y1 z1 points))
 	(print IPList)
-	(start_image "Wimage")
 		(vector_image  5  5 10 10 4)
-	(end_image)
-;;	(print (dimx_tile "Wimage"))
+;;(print (dimx_tile "Wimage"))
 ;;	(print (distance '(0.0 0.0 0.0) (dimx_tile "Wimage")))
 ;;	(print (distance '(0.0 0.0 0.0) (dimy_tile "Wimage")))
 ;;	(if (> (distance '(0.0 0.0 0.0) (dimx_tile "Wimage")) (distance '(0.0 0.0 0.0) (dimy_tile "Wimage")))
@@ -71,6 +75,8 @@
 				(setq ct "X")
 				(setq ct (1+ ct))
 			)
+			(PRINT LPOINTS)
+			(vector_image  (car (car IPlist)) (cadr (car IPlist)) (car (cadr IPlist)) (cadr (cadr IPlist)) -16) 
 		)
 	(print "end SBS-WImage")
 )

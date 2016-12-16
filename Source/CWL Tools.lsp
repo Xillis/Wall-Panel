@@ -20,32 +20,35 @@
 )
 
 ;;locats and starts a dialogue specified and executes a function of the same name 
-(defun CWL-START-DIA ( DIA-Name DIA-M / DIA-ID )
+(defun CWL-START-DIA ( DIA-Name DIA-M / DIA-ID PassThrough DFlag)
 	(print "start CWL-START_DIA")
 	(setq DIA_ID (load_dialog "SBS-Dialog.dcl"))
 	(cond
 		((= DIA-M "M")
 			(PROGN
-				(setq DFlag 2)	
+				(setq 
+					DFlag 2
+					PassThrough (list(list "DFlag" DFlag))
+				)
 				(while (>= DFlag 2)
 					(IF (NOT (new_dialog DIA-Name DIA_ID))
 						(EXIT)
-						(SETQ DFLAG (eval (list(read DIA-name) DFLAG )))
+						(print(SETQ PassThrough (eval (list(read DIA-name) 'PassThrough))))
 					)
+					(SETQ DFlag (CADR (CAR PassThrough)))
 				)
 			)
 		)
 		((= DIA-M "S")
-			(PROGN
-				(IF (NOT (new_dialog DIA-Name DIA_ID))
+			(IF (NOT (new_dialog DIA-Name DIA_ID))
 					(EXIT)
 					(eval (list(read DIA-name)))
-				)
 			)
 		)
 	)
 	(unload_dialog DIA_ID)
 	(print "end CWL-START_DIA")
+	(cdr PassThrough)
 )
 
 ;; extract points from a Polyline and returns a list of the points 
@@ -64,6 +67,9 @@
 				PPoints (append PPoints (list (append (cdr p) (list (cdr (assoc 38 pline))))))
 			)
 		)
+	)
+	(IF (= (DISTANCE (CAR PPoints) (LAST PPoints)) 0.0)
+		(SETQ PPoints (CDR PPoints))
 	)
 	(print "end CWL-PPOINTS")
 	PPoints
@@ -109,10 +115,10 @@
 )
 
 ;;subtracts a list of points by the number specified with x,y,z
-(defun CWL-ALIST ( x1 y1 z2 Plist / pf )
+(defun CWL-ALIST ( x1 y1 z1 Plist / pf )
 	(print "start CWL-ALIST")
 	(foreach p Plist
-		(setq pf (cons (list (- (car p) x1) (- (cadr p) y1) (- (caddr p) z1)) pf))
+		(setq pf (cons (list (FIX(- (car p) x1)) (FIX(- (cadr p) y1)) (FIX(- (caddr p) z1))) pf))
 	)
 	(setq pf (reverse pf))
 	(print "end CWL-ALIST")
