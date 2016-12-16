@@ -1,9 +1,10 @@
 ;;wall creation function for Steelway building systems
-(DEFUN C:SBS-WP (/ oldvar )
+(DEFUN C:SBS-WP (/ oldvar PassTrough )
 	(print "start SBS-WP")
 	(setq oldvar (CWL-SVVCF (list '("CMDECHO" 0) ;|'("OSMODE" 16384)|;)))
-	(CWL-START-DIA "SBS_WallProperties" "M")
+	(setq PassTrough (CWL-START-DIA "SBS_WallProperties" "M"))
 	(CWL-SVVCF oldvar)
+	(print PassTrough)
 	(print "end SBS-WP")
 	(princ)
 )	
