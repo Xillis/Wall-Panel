@@ -19,7 +19,7 @@
 	oldvar
 )
 
-;;locats and starts a dialogue specified and executes a function of the same name 
+;;locates and starts a dialogue specified and executes a function of the same name 
 (defun CWL-START-DIA ( DIA-Name DIA-M / DIA-ID PassThrough DFlag)
 	(print "start CWL-START_DIA")
 	(setq DIA_ID (load_dialog "SBS-Dialog.dcl"))
@@ -33,7 +33,7 @@
 				(while (>= DFlag 2)
 					(IF (NOT (new_dialog DIA-Name DIA_ID))
 						(EXIT)
-						(print(SETQ PassThrough (eval (list(read DIA-name) 'PassThrough))))
+						(SETQ PassThrough (eval (list(read DIA-name) 'PassThrough)))
 					)
 					(SETQ DFlag (CADR (CAR PassThrough)))
 				)
@@ -75,29 +75,23 @@
 	PPoints
 )
 
-;;finds the Left or right most points sorted by upper or lower "LL, UL, LR, UR" and returns a list sorted with the specified pint as the first point 
+;;finds the Left or right most points sorted by upper or lower "Left, Right" and returns a list sorted with the specified pint as the first point 
 (defun CWL-FPOINT ( PList SP / SList CNT PList SP e1 e2 TPOINT)
 	(PRINT "start CWL-FPOINT")
-	(SETQ Slist(vl-sort-i PList
-		(function
-			(lambda (e1 e2)
-				(IF (OR (= SP "LL" )(= SP "UL"))
-					(< (car e1) (car e2))
-					(> (car e1) (car e2))
+	(SETQ Slist
+		(vl-sort-i PList
+			(function
+				(lambda (e1 e2)
+					(IF (= SP "Left" )
+						(< (car e1) (car e2))
+						(> (car e1) (car e2))
+					)
 				)
 			)
 		)
-	))
+	)
 	(IF (= (CAR (NTH (CAR SList) PList)) (CAR (NTH (CADR SList) PList)))
-		(IF 
-			(OR
-				(AND
-					(OR (= SP "UL") (= SP "UR")) (<(CADR (NTH (CAR SList) PList)) (CADR (NTH (CADR SList) PList)))
-				)
-				(AND
-					(OR (= SP "LL") (= SP "LR")) (>(CADR (NTH (CAR SList) PList)) (CADR (NTH (CADR SList) PList)))
-				)
-			)
+		(IF (<(CADR (NTH (CAR SList) PList)) (CADR (NTH (CADR SList) PList)))
 			(SETQ CNT (CADR SList))
 			(SETQ CNT (CAR SList))
 		)
@@ -118,7 +112,7 @@
 (defun CWL-ALIST ( x1 y1 z1 Plist / pf )
 	(print "start CWL-ALIST")
 	(foreach p Plist
-		(setq pf (cons (list (FIX(- (car p) x1)) (FIX(- (cadr p) y1)) (FIX(- (caddr p) z1))) pf))
+		(setq pf (cons (list (- (car p) x1) (- (cadr p) y1) (- (caddr p) z1)) pf))
 	)
 	(setq pf (reverse pf))
 	(print "end CWL-ALIST")
@@ -134,4 +128,14 @@
 	)
 	(print "end CWL-2POINT")
 	2Point
+)
+
+;;Reterns the Max and Min 'x' and 'x' of a givin point list (XMin XMax YMin YMax)
+(defun CWL-MAXPOINT ( Points / XL YL PointList )
+	(print "start CWL-MAXPOINT")
+	(SETQ XL (vl-sort-i Points (function (lambda (e1 e2) (< (car e1) (car e2))))))
+	(SETQ YL (vl-sort-i Points (function (lambda (e1 e2) (< (cadr e1) (cadr e2))))))
+	(setq PointList (list (car (nth (car XL) points))(car (nth (last XL) points))(cadr (nth (car YL) points))(cadr (nth (last YL) points))))
+	(print "end CWL-MAXPOINT")
+	PointList
 )
