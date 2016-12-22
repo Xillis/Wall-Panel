@@ -12,10 +12,9 @@
 				(setq Wpoints (cadr Wpoints))
 				(SBS-WIMAGE Wpoints)
 			)
-			(vector_image  0  0
-			(dimx_tile "Wimage")
-			(dimy_tile "Wimage")
-			-16
+			(progn
+				(vector_image 0 0 (dimx_tile "Wimage") (dimy_tile "Wimage") -16)
+				(vector_image (dimx_tile "Wimage") 0 0 (dimy_tile "Wimage") -16)
 			)
 		)
 	(end_image)

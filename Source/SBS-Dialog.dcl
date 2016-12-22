@@ -1,8 +1,8 @@
 SBS_WallProperties : dialog {
 	label = "Wall Information";
 	key = "dlg_WProp";
-	:boxed_row {
-		:column {
+	:row {
+		:boxed_column {
 			:image {
 				label = "Wall Layout";
 				key = "Wimage";
@@ -20,6 +20,13 @@ SBS_WallProperties : dialog {
 				}
 			}	
 		}
-	}	
+		:boxed_column {
+			:text {
+				label = "Panel type";
+				key = "Ptype";
+				value = "123";
+			}
+			
+	}	}
 	ok_cancel; 
 }
