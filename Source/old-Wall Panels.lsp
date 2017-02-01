@@ -109,6 +109,7 @@
 ;;-------------------------
 (defun SBS-PANEL-DIA (/ DIA-ID PTV WV GV PV PT BSV PID CV COLOUR MRK MKL)
 (print "start panel dia")
+	(setq DIA_ID (load_dialog "OLD-SBS-Dialog.dcl"))
 	(IF (NOT (new_dialog "SBS_PanelProperties" DIA_ID))
 		(EXIT)
 	)
@@ -296,6 +297,7 @@
 
 ;;StormSeal dialg control
 (DEFUN SBS-STORMSEAL-DIA ( / SFV COV DIA_ID1 )
+	(setq DIA_ID1 (load_dialog "OLD-SBS-Dialog.dcl"))
 		(IF (NOT (new_dialog "SBS_Stormseal" DIA_ID1))
 			(EXIT)
 		)
@@ -368,6 +370,7 @@
 
 ;;Strucseal 36 dialog control
 (DEFUN SBS-STRUCSEAL-DIA ( / SFV COV FLIST DIA_ID1 FLU)
+	(setq DIA_ID1 (load_dialog "OLD-SBS-Dialog.dcl"))
 		(IF (NOT (new_dialog "SBS_StrucSeal" DIA_ID1))
 			(EXIT)
 		)
@@ -480,6 +483,7 @@
 )
 
 (DEFUN SBS-DVSEAL-DIA ( / SFV COV DIA_ID1 )
+	(setq DIA_ID1 (load_dialog "OLD-SBS-Dialog.dcl"))
 		(IF (NOT (new_dialog "SBS_DVseal" DIA_ID1))
 			(EXIT)
 		)

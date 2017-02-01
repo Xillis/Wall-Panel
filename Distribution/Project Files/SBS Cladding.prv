@@ -1,0 +1,39 @@
+;;; Visual LISP make file [V1.0] SBS Cladding saved to:[C:/Users/clarkl/Documents/GitHub/Wall-Panel/Distribution/Project Files] at:[2/1/17] 
+(PRV-DEF
+  (:target . "SBS Cladding.VLX")
+  (:active-x . T)
+  (:separate-namespace)
+  (:protected . T)
+  (:load-file-list
+    (:lsp
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/old-Wall Panels.lsp"
+    )
+    (:lsp
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/tmp-Tools.lsp"
+    )
+  )
+  (:require-file-list
+    (:DCL
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/OLD-SBS-Dialog.DCL"
+    )
+    (:txt
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/Information tables/Colour_Chart.SBS"
+    )
+    (:txt
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/Information tables/COLOUR_MATRIX.SBS"
+    )
+    (:txt
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/Information tables/FEATURES-BITLIST.SBS"
+    )
+    (:txt
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/Information tables/Panel_Finishes.SBS"
+    )
+    (:txt
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/Information tables/Panel_Properties.SBS"
+    )
+  )
+  (:ob-directory)
+  (:tmp-directory)
+  (:optimization . lsa)
+)
+;; EOF
