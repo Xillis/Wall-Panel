@@ -23,3 +23,68 @@
 	(print "end SBS_Wallpoints")
 	WPLIST
 )
+
+;;Splits the wall polyline in to roof points and floor points. outputs list ((RoofL "points") (FloorL "points") 
+(DEFUN SBS_POINT_SPLIT ( pointlist / pointlist tempP RP Tpoints Bpoints comblist)
+	(print "Start CWL_POINT_SPLIT")
+	(if (> (cadr (cadr pointlist)) (cadr (last pointlist)))
+		(SETQ
+			TempP (list (car pointlist))
+			pointlist (CDR pointlist)
+			pointlist (APPEND pointlist TempP)
+			Pointlist (reverse pointlist)
+		)
+	)
+	(setq
+		RP (car (vl-sort-i pointlist (function (lambda (e1 e2) (> (car e1) (car e2))))))
+		Tpoints (reverse (member (nth RP pointlist) pointlist))
+		Bpoints (reverse (cdr (member (nth RP pointlist) (reverse pointlist))))
+	)
+	(cond
+		((and (/= (rtos (car (car Tpoints))) (rtos (car (car Bpoints)))) (/= (rtos (car (last Tpoints))) (rtos (car (last Bpoints))))) 
+			(setq comblist (SBS_PS_FIXLEFT Tpoints Bpoints))
+			(setq comblist (SBS_PS_FIXRIGHT (cadr (assoc 'TOP comblist)) (cadr (assoc 'BOTTOM comblist))))
+		)
+		((/= (rtos (car (car Tpoints))) (rtos (car (car Bpoints))))
+			(setq comblist (SBS_PS_FIXLEFT Tpoints Bpoints))
+		)
+		((/= (rtos (car (last Tpoints))) (rtos (car (last Bpoints))))
+			(setq comblist (SBS_PS_FIXRIGHT Tpoints Bpoints))		
+		)
+		(t 
+			(setq Comblist (SBS_PS_COMBLIST tpoints Bpoints))
+		)
+	)
+	(print "End CWL_POINT_SPLIT")
+	Comblist
+)
+
+(DEFUN SBS_PS_FIXLEFT ( Tpoints Bpoints / Tpoints Bpoints comblist )
+	(print "start SBS_PS_FIXLEFT")
+	(if (< (car (car Tpoints)) (car (car Bpoints)))
+		(setq Bpoints (append (list (car tpoints)) Bpoints))	
+		(setq Tpoints (append (list (car Bpoints)) Tpoints))
+	)
+	(setq Comblist (SBS_PS_COMBLIST tpoints Bpoints))
+	(print "end SBS_PS_FIXLEFT")
+	comblist
+)
+
+(DEFUN SBS_PS_FIXRIGHT ( Tpoints Bpoints / Tpoints Bpoints comblist )
+	(print "start SBS_PS_FIXRIGHT")
+	(if (> (car (last Tpoints)) (car (last Bpoints)))
+		(setq Bpoints (append Bpoints (list (last tpoints))))
+		(setq Tpoints (append Tpoints (list (last Bpoints))))
+	)
+	(setq Comblist (SBS_PS_COMBLIST tpoints Bpoints))
+	(print "end SBS_PS_FIXRIGHT")
+	comblist
+)
+
+(defun SBS_PS_COMBLIST ( Tpoints Bpoints / Tpoints Bpoints Comblist )
+	(print "start SBS_PS_COMBLIST")
+	(setq Comblist (list (list 'Top Tpoints) (list  'Bottom Bpoints)))
+	(print "end SBS_PS_COMBLIST")
+	Comblist
+)
+

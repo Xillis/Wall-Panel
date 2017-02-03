@@ -9,7 +9,7 @@
 )
 
 ;;sets specified sys vars to values specified and returns the old values in a list
-(defun CWL-SVVCF ( sysvar / oldvar)
+(defun CWL-SVVCF ( sysvar / sysvar oldvar)
 	(print "start CWL-SVVCF")
 	(foreach var sysvar
 		(setq oldvar (append oldvar (list (list(nth 0 var) (getvar (nth 0 var))))))
@@ -68,14 +68,14 @@
 			)
 		)
 	)
-	(IF (= (DISTANCE (CAR PPoints) (LAST PPoints)) 0.0)
+	(IF (= (cdr (assoc 70 pline)) 0)
 		(SETQ PPoints (CDR PPoints))
 	)
 	(print "end CWL-PPOINTS")
 	PPoints
 )
 
-;;finds the Left or right most points sorted by upper or lower "Left, Right" and returns a list sorted with the specified pint as the first point 
+;;finds the extreme lower left or lower right points then resorts the list with this point as the first point
 (defun CWL-FPOINT ( PList SP / SList CNT PList SP e1 e2 TPOINT)
 	(PRINT "start CWL-FPOINT")
 	(SETQ Slist
@@ -91,7 +91,7 @@
 		)
 	)
 	(IF (= (CAR (NTH (CAR SList) PList)) (CAR (NTH (CADR SList) PList)))
-		(IF (<(CADR (NTH (CAR SList) PList)) (CADR (NTH (CADR SList) PList)))
+		(IF (>(CADR (NTH (CAR SList) PList)) (CADR (NTH (CADR SList) PList)))
 			(SETQ CNT (CADR SList))
 			(SETQ CNT (CAR SList))
 		)
@@ -109,7 +109,7 @@
 )
 
 ;;subtracts a list of points by the number specified with x,y,z
-(defun CWL-ALIST ( x1 y1 z1 Plist / pf )
+(defun CWL-ALIST ( x1 y1 z1 Plist / pf x1 y1 z1 Plist )
 	(print "start CWL-ALIST")
 	(foreach p Plist
 		(setq pf (cons (list (- (car p) x1) (- (cadr p) y1) (- (caddr p) z1)) pf))
@@ -120,7 +120,7 @@
 )
 
 ;;return 2 adjacent points in a list and loop to the first point if at the end of the list
-(defun CWL-2POINT (PLIST LOC / 2POINT)
+(defun CWL-2POINT (PLIST LOC / 2POINT PLIST LOC)
 (print "start CWL-2POINT")
 	(IF (= (NTH (1+ LOC) PList) nil)
 		(SETQ 2POINT (LIST (NTH LOC PLIST)(CAR PLIST)))
@@ -131,7 +131,7 @@
 )
 
 ;;Reterns the Max and Min 'x' and 'x' of a givin point list (XMin XMax YMin YMax)
-(defun CWL-MAXPOINT ( Points / XL YL PointList )
+(defun CWL-MAXPOINT ( Points / XL YL PointList Points)
 	(print "start CWL-MAXPOINT")
 	(SETQ XL (vl-sort-i Points (function (lambda (e1 e2) (< (car e1) (car e2))))))
 	(SETQ YL (vl-sort-i Points (function (lambda (e1 e2) (< (cadr e1) (cadr e2))))))

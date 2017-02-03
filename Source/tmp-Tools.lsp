@@ -78,6 +78,7 @@
 	(setq acadObj (vlax-get-acad-object))
 	(setq FirstColour (vlax-create-object "AutoCAD.AcCmColor.21"))
 	(PRINT FIRSTCOLOUR)
+	(print CC)
 	(vla-SetColorBookColor FirstColour "Steelway Cladding Colourbook" CC)
     (vla-put-TrueColor OBJ FirstColour)
     (vlax-release-object FirstColour)

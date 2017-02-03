@@ -1,5 +1,5 @@
 ;;Wall Properties dialog function
-(defun SBS_WallProperties ( PassTrough / Wpoints PassTrough DFlag )
+(defun SBS_WallProperties ( PassTrough / Wpoints PassTrough DFlag Spoints )
 	(print "start SBS_WallProperties")
 	(start_image "Wimage")
 		(fill_image 0 0 
@@ -36,18 +36,23 @@
 	(setq DFlag (start_dialog))
 	(cond
 		((= DFlag 3) 
-			(setq Wpoints (list (SBS_Wallpoints)))
+			(setq Wpoints (CWL-FPOINT (SBS_Wallpoints) "Left"))
+			(setq Spoints (SBS_POINT_SPLIT Wpoints))
 		)
 		((= DFlag 4)
-			(setq Wpoints (list (CWL-FPOINT (CWL-PPOINTS) "Left")))
+			(setq Wpoints (CWL-FPOINT (CWL-PPOINTS) "Left"))
+			(setq Spoints (SBS_POINT_SPLIT Wpoints))
 		)
 	)
+	(if (= Spoints nil)
+		(setq spoints (cadr (assoc '"Split Points" PassTrough)))
+		)
 	(print "end SBS_WallProperties")
-	(cons (list "DFlag" DFlag) (list (append '("Wall Points") Wpoints))) 
+	(list (list "DFlag" DFlag) (list '"Wall Points" Wpoints) (list '"Split Points" Spoints))
 )
 
 ;;Wall image calculations
-(DEFUN SBS-WImage ( Points / Dpoint IPList LPoints ct 2Ponts)
+(DEFUN SBS-WImage ( Points / Points Dpoint IPList LPoints ct 2Ponts)
 	(print "start SBS-WImage")
 	(setq dpoint (CWL-MAXPOINT Points))
 	(setq IPList (CWL-ALIST (car DPoint) (caddr DPoint) 0.0 points))
