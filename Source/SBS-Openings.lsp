@@ -75,7 +75,7 @@
 
 (DEFUN OPENING_DIA ( / DIA_ID GV DFlag PT1 PT2 PANEL DTRIM )
 (print "Start Dia")
-	(setq DIA_ID (load_dialog "SBS-Dialog.dcl"))
+	(setq DIA_ID (load_dialog "OLD-SBS-Dialog.dcl"))
 	(setq DFlag 2)	
 	(while (>= DFlag 2)
 		(IF (NOT (new_dialog "SBS_OPENING" DIA_ID))

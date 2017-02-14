@@ -1,12 +1,12 @@
 ;;Error handling Function 
-(defun CWL-ERR (msg)
+;|(defun CWL-ERR (msg)
 	(if (/= msg "function cancelled")
 		(alert (stacat "/nError: " msg))
 	)
 	(command "._undo" "_e")
 	(command "._undo" "_u")
 ;;	(setq *error* set in list passed from main function TBD
-)
+)|;
 
 ;;sets specified sys vars to values specified and returns the old values in a list
 (defun CWL-SVVCF ( sysvar / sysvar oldvar)
@@ -21,8 +21,8 @@
 
 ;;locates and starts a dialogue specified and executes a function of the same name 
 (defun CWL-START-DIA ( DIA-Name DIA-M / DIA-ID PassThrough DFlag)
-	(print "start CWL-START_DIA")
-	(setq DIA_ID (load_dialog "SBS-Dialog.dcl"))
+	(print (strcat "start CWL-START_DIA - " DIA-NAME))
+	(setq DIA-ID (load_dialog "SBS-Dialog.dcl"))
 	(cond
 		((= DIA-M "M")
 			(PROGN
@@ -31,24 +31,25 @@
 					PassThrough (list(list "DFlag" DFlag))
 				)
 				(while (>= DFlag 2)
-					(IF (NOT (new_dialog DIA-Name DIA_ID))
+					(IF (NOT (new_dialog DIA-Name DIA-ID))
 						(EXIT)
 						(SETQ PassThrough (eval (list(read DIA-name) 'PassThrough)))
 					)
-					(SETQ DFlag (CADR (CAR PassThrough)))
+					(SETQ DFlag (CADR (assoc "DFlag" PassThrough)))
+					(print dflag)
 				)
 			)
 		)
 		((= DIA-M "S")
-			(IF (NOT (new_dialog DIA-Name DIA_ID))
+			(IF (NOT (new_dialog DIA-Name DIA-ID))
 					(EXIT)
 					(eval (list(read DIA-name)))
 			)
 		)
 	)
-	(unload_dialog DIA_ID)
-	(print "end CWL-START_DIA")
-	(cdr PassThrough)
+	(unload_dialog DIA-ID)
+	(print (strcat "end CWL-START_DIA - " DIA-NAME))
+	(vl-remove (assoc "DFlag" PassThrough) Passthrough)
 )
 
 ;; extract points from a Polyline and returns a list of the points 

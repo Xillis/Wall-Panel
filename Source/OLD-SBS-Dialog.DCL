@@ -41,6 +41,10 @@ SBS_PanelProperties : dialog {
 				fixed_width = true;
 				width = 23;
 			}
+			:toggle {
+				label = "Other";
+				key = "allColour";
+			}
 		}
 		:spacer {width = 3;}
 		:boxed_column {

@@ -1,5 +1,5 @@
 ;;Wall Properties dialog function
-(defun SBS_WallProperties ( PassTrough / Wpoints PassTrough DFlag Spoints )
+(defun SBS_WallProperties ( PassTrough / PassTrough DFlag Spoints panel)
 	(print "start SBS_WallProperties")
 	(start_image "Wimage")
 		(fill_image 0 0 
@@ -7,11 +7,8 @@
 			(dimy_tile "Wimage")
 			-15
 		)
-		(if (/= (setq Wpoints (assoc "Wall Points" PassTrough)) nil)
-			(progn 
-				(setq Wpoints (cadr Wpoints))
+		(if (/= (setq Wpoints(cadr (assoc "Wall Points" PassTrough))) nil)
 				(SBS-WIMAGE Wpoints)
-			)
 			(progn
 				(vector_image 0 0 (dimx_tile "Wimage") (dimy_tile "Wimage") -16)
 				(vector_image (dimx_tile "Wimage") 0 0 (dimy_tile "Wimage") -16)
@@ -20,35 +17,31 @@
 	(end_image)
 	(action_tile "Ppoints" "(Done_dialog 3)")
 	(action_tile "Spoly" "(Done_dialog 4)")
-	(action_tile "accept"
-		(STRCAT
-		"(PRINT \"accept\")
-		(done_dialog 1)"
-		)
-	)
-	(action_tile "cancel"
-		(strcat 
-			"(print \"cancel\")
-			(exit)
-			(done_dialog 0)"
-		)
-	)
+	(action_tile "SPType" "(Done_dialog 5)")
+	(action_tile "accept" "(done_dialog 1)")
+	(action_tile "cancel" "(print \"Cancel\")(done_dialog 0)")
 	(setq DFlag (start_dialog))
 	(cond
 		((= DFlag 3) 
 			(setq Wpoints (CWL-FPOINT (SBS_Wallpoints) "Left"))
-			(setq Spoints (SBS_POINT_SPLIT Wpoints))
 		)
 		((= DFlag 4)
 			(setq Wpoints (CWL-FPOINT (CWL-PPOINTS) "Left"))
-			(setq Spoints (SBS_POINT_SPLIT Wpoints))
+		)
+		((= Dflag 5)
+			(setq Panel (CWL-START-DIA "SBS_Panel_info" "M"))
 		)
 	)
-	(if (= Spoints nil)
-		(setq spoints (cadr (assoc '"Split Points" PassTrough)))
+(setq passtrough (list (list '"Wall Points" Wpoints) (list '"Panel Info" Panel)))
+	(if (= Dflag 1)
+		(progn
+			(print "accept")
+			(print Passtrough)
+			(SBS-WALL-PANEL-CALC passTrough)
 		)
+	)
 	(print "end SBS_WallProperties")
-	(list (list "DFlag" DFlag) (list '"Wall Points" Wpoints) (list '"Split Points" Spoints))
+	(append passTrough (list (list "DFlag" DFlag)))
 )
 
 ;;Wall image calculations
@@ -77,3 +70,22 @@
 	(print "end SBS-WImage")
 )
 
+;;Panel information collection dialog Box
+(defun SBS_Panel_info ( Panel / )
+	(print "Start SBS_Panel_info")
+	(action_tile "accept"
+		(STRCAT
+			"(PRINT \"accept\")
+			(done_dialog 1)"
+		)
+	)
+	(action_tile "cancel"
+		(strcat 
+			"(print \"cancel\")
+			(done_dialog 0)"
+		)
+	)
+	(setq DFlag (start_dialog))
+	(print "end SBS_Panel_info")
+	(list (list "DFlag" DFlag) (list '"Panel info" ))
+)

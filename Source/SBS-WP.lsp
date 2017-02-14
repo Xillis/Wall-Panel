@@ -59,6 +59,7 @@
 	Comblist
 )
 
+;;sorts the wall point based on orgin to be sorted from the left
 (DEFUN SBS_PS_FIXLEFT ( Tpoints Bpoints / Tpoints Bpoints comblist )
 	(print "start SBS_PS_FIXLEFT")
 	(if (< (car (car Tpoints)) (car (car Bpoints)))
@@ -70,6 +71,7 @@
 	comblist
 )
 
+;;sorts the wall point based on orgin to be sorted from the right
 (DEFUN SBS_PS_FIXRIGHT ( Tpoints Bpoints / Tpoints Bpoints comblist )
 	(print "start SBS_PS_FIXRIGHT")
 	(if (> (car (last Tpoints)) (car (last Bpoints)))
@@ -81,10 +83,30 @@
 	comblist
 )
 
+;;combines the sorted wall points in a list
 (defun SBS_PS_COMBLIST ( Tpoints Bpoints / Tpoints Bpoints Comblist )
 	(print "start SBS_PS_COMBLIST")
 	(setq Comblist (list (list 'Top Tpoints) (list  'Bottom Bpoints)))
 	(print "end SBS_PS_COMBLIST")
 	Comblist
 )
+
+;;main wall calculation function
+(defun SBS-WALL-PANEL-CALC ( PASSTHROUGH / PASSTHROUGH SPOINTS top bottom RUNLENGTH WLENGTH)
+	(print "start SBS-WALL-PANEL-CALC")
+	(PRINT PASSTHROUGH)
+	(PRINT (setq Spoints (SBS_POINT_SPLIT (CADR (assoc "Wall Points" PassTrough)))))
+	(setq
+		Top (cadr (assoc 'TOP Spoints))
+		Bottom (cadr (assoc 'BOTTOM SPoints))
+		WLENGTH (DISTANCE (LIST (CAR (CAR BOTTOM)) 0.0 0.0) (LIST (CAR (LAST BOTTOM)) 0.0 0.0))
+	)
+	(PRINT WLENGTH)
+	(WHILE ( < RUNLENGTH WLENGTH)
+	(PRINT "FUNCTION SHIT")
+	(SETQ RUNLENGTH WLENGTH)
+	)
+	(print "end SBS-WALL-PANEL-CALC")
+)
+	
 
