@@ -71,8 +71,21 @@
 )
 
 ;;Panel information collection dialog Box
-(defun SBS_Panel_info ( Panel / )
+(defun SBS_Panel_info ( Panel / RPBIT RWBIT RGBIT FINBIT PLIST)
 	(print "Start SBS_Panel_info")
+	(SETQ
+		RPBIT 47 ;;Panel bit Reference
+		RWBIT 16128 ;;Width Bit Reference
+		RGBIT 507904 ;;Gauge Bit Reference
+		RSBIT 1572864 ;;Profile Bit Reference
+	)
+	(print Panel)
+	;;(if (null panel)
+	(CWL-DDBCOAD RPBIT "SBS-PANEL-INFO" "Panel_type")
+	(SETQ FINBIT 0)
+	(action_tile "Panel_type"
+		"(SBS-DIA-BITREST FINBIT RPBIT RWBIT RGBIT RSBIT \"SBS-PANEL-INFO\")"
+	)
 	(action_tile "accept"
 		(STRCAT
 			"(PRINT \"accept\")
@@ -88,4 +101,15 @@
 	(setq DFlag (start_dialog))
 	(print "end SBS_Panel_info")
 	(list (list "DFlag" DFlag) (list '"Panel info" ))
+)
+
+;;Resets dialogue list based on the supplied FINBIT and reference bits RETERNS A NEW FINBIT
+;;used with Panel information action_tile calls
+(defun SBS-DIA-BITREST (FINBIT KEYBIT RWBIT RGBIT RSBIT UTABLE / CELLVALUE ELIST )
+	(setq CELLVALUE $value)
+	(setq ELIST (CWL-BITLIST KEYBIT UTABLE))
+	(PRINT (SETQ LINE (NTH (READ CELLVALUE) ELIST))) 
+	(CWL-DDBCOAD (LOGAND (LAST LINE) RWBIT) "SBS-PANEL-INFO" "Width")
+	(CWL-DDBCOAD (LOGAND (LAST LINE) RGBIT) "SBS-PANEL-INFO" "Gauge")
+	(CWL-DDBCOAD (LOGAND (LAST LINE) RSBIT) "SBS-PANEL-INFO" "Profile")
 )

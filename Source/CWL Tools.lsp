@@ -36,7 +36,6 @@
 						(SETQ PassThrough (eval (list(read DIA-name) 'PassThrough)))
 					)
 					(SETQ DFlag (CADR (assoc "DFlag" PassThrough)))
-					(print dflag)
 				)
 			)
 		)
@@ -139,4 +138,43 @@
 	(setq PointList (list (car (nth (car XL) points))(car (nth (last XL) points))(cadr (nth (car YL) points))(cadr (nth (last YL) points))))
 	(print "end CWL-MAXPOINT")
 	PointList
+)
+
+;;Creates a list using a bit code and a table
+(defun CWL-BITLIST ( SBIT UTABLE / POS RL ELIST INFO )
+	(print "start CWL-BITLIST")
+	(SETQ 
+		INFO (VL-GET-RESOURCE UTABLE)
+		POS 1
+		RL " "
+	)
+	(WHILE (not (null RL))
+		(SETQ RL (read (substr INFO POS )))
+		(IF (AND (not (null RL)) (/= (LOGAND SBIT (car RL)) 0))
+			(SETQ ELIST (APPEND (LIST RL) ELIST))
+		)
+		(SETQ POS (+ POS 2))
+		(if (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))
+			(SETQ POS (+ POS (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))))
+			(setq rl nil)
+		)
+	)
+	(print "END CWL-BITLIST")
+	(reverse ELIST)
+)
+
+;;populates a dialogue list from a list and bit table
+(defun CWL-DDBCOAD ( SBIT UTABLE DIAKEY / ELIST )
+	(print (strcat "start CWL-DDBCOAD - " DIAKEY))
+	(setq ELIST (CWL-BITLIST SBIT UTABLE))
+	(START_LIST DIAKEY)
+		(MAPCAR 'ADD_LIST 
+			(MAPCAR 
+				'(LAMBDA (i)
+					(CADR i)
+				)
+			ELIST)
+		)
+	(END_LIST)
+	(print (strcat "end CWL-DDBCOAD - " DIAKEY))
 )

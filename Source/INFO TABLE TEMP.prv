@@ -1,0 +1,12 @@
+;;; Visual LISP make file [V1.0] INFO TABLE TEMP saved to:[C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source] at:[2/16/17] 
+(PRV-DEF (:target . "INFO TABLE TEMP.VLX")
+	 (:active-x . T)
+	 (:separate-namespace)
+	 (:protected . T)
+	 (:load-file-list)
+	 (:require-file-list (:txt "SBS-PANEL-INFO.SBS"))
+	 (:ob-directory)
+	 (:tmp-directory)
+	 (:optimization . st)
+)
+;; EOF
