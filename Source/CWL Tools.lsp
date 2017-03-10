@@ -8,6 +8,12 @@
 ;;	(setq *error* set in list passed from main function TBD
 )|;
 
+(defun *error* (msg)
+  (princ "error: ")
+  (princ msg)
+ (princ)
+)
+
 ;;sets specified sys vars to values specified and returns the old values in a list
 (defun CWL-SVVCF ( sysvar / sysvar oldvar)
 	(print "start CWL-SVVCF")
@@ -20,15 +26,16 @@
 )
 
 ;;locates and starts a dialogue specified and executes a function of the same name 
-(defun CWL-START-DIA ( DIA-Name DIA-M / DIA-ID PassThrough DFlag)
+(defun CWL-START-DIA ( DIA-Name DIA-M PassThrough / DIA-ID PassThrough DFlag)
 	(print (strcat "start CWL-START_DIA - " DIA-NAME))
 	(setq DIA-ID (load_dialog "SBS-Dialog.dcl"))
 	(cond
 		((= DIA-M "M")
 			(PROGN
-				(setq 
-					DFlag 2
-					PassThrough (list(list "DFlag" DFlag))
+				(setq DFlag 2 )
+				(if (null PassThrough)
+					(setq PassThrough (list(list "DFlag" DFlag)))
+					(setq PassThrough (append (list PassThrough) (list(list "DFlag" DFlag))))
 				)
 				(while (>= DFlag 2)
 					(IF (NOT (new_dialog DIA-Name DIA-ID))
@@ -176,5 +183,18 @@
 			ELIST)
 		)
 	(END_LIST)
+	(IF (< (LENGTH ELIST) 2)
+		(MODE_TILE DIAKEY 1)
+		(MODE_TILE DIAKEY 0)
+	)
 	(print (strcat "end CWL-DDBCOAD - " DIAKEY))
+)
+
+;; creates a list based on a set bit list and renters the position of an item in the list based off the first value of the item
+(DEFUN CWL-TILESET (BIT BITRANGE UTABLE / )
+(PRINT "START CWL-TILESET")
+(SETQ VLIST (CWL-BITLIST BITRANGE UTABLE))
+(SETQ VALU (itoa (VL-POSITION (ASSOC BIT VLIST) VLIST)))
+(PRINT "END CWL-TILESET")
+VALU
 )
