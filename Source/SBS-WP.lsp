@@ -1,10 +1,9 @@
 ;;wall creation function for Steelway building systems
-(DEFUN C:SBS-WP (/ oldvar PassTrough )
+(DEFUN C:SBS-WP (/ oldvar PASSTHROUGH )
 	(print "start SBS-WP")
 	(setq oldvar (CWL-SVVCF (list '("CMDECHO" 0) ;|'("OSMODE" 16384)|;)))
-	(setq PassTrough (CWL-START-DIA "SBS_WallProperties" "M"))
+	(setq PASSTHROUGH (CWL-START-DIA "SBS_WallProperties" "M" nil))
 	(CWL-SVVCF oldvar)
-	(print PassTrough)
 	(print "end SBS-WP")
 	(princ)
 )	
@@ -92,20 +91,71 @@
 )
 
 ;;main wall calculation function
-(defun SBS-WALL-PANEL-CALC ( PASSTHROUGH / PASSTHROUGH SPOINTS top bottom RUNLENGTH WLENGTH)
+(defun SBS-WALL-PANEL-CALC ( PASSTHROUGH / PASSTHROUGH SPOINTS top bottom RUNLENGTH WLENGTH PINFO)
 	(print "start SBS-WALL-PANEL-CALC")
-	(PRINT PASSTHROUGH)
-	(PRINT (setq Spoints (SBS_POINT_SPLIT (CADR (assoc "Wall Points" PassTrough)))))
+(setq Spoints (SBS_POINT_SPLIT (CADR (assoc "Wall Points" PASSTHROUGH))))
 	(setq
 		Top (cadr (assoc 'TOP Spoints))
 		Bottom (cadr (assoc 'BOTTOM SPoints))
 		WLENGTH (DISTANCE (LIST (CAR (CAR BOTTOM)) 0.0 0.0) (LIST (CAR (LAST BOTTOM)) 0.0 0.0))
+		PINFO (CWL-BITLIST (cadr (assoc "Panel info" PASSTHROUGH)) "SBS-PANEL-INFO")
 	)
-	(PRINT WLENGTH)
+	(print "Panel Info")
+	(print (cadr (car PINFO)))
+	(print (strcat "Width: " (VL-PRINC-TO-STRING (CADR (CADR PINFO)))))
+	(print (strcat "Profile: " (VL-PRINC-TO-STRING (CADR (CADDDR PINFO)))))
+	(print (strcat "Gauge: " (VL-PRINC-TO-STRING (CADR (CADDR PINFO)))))
+	(print "------------------------------")
+	(print (STRCAT "Top points = " (VL-PRINC-TO-STRING Top)))
+	(print (STRCAT "Bottom Points = " (VL-PRINC-TO-STRING Bottom)))
+	(print (STRCAT "Total Wall Length = "(VL-PRINC-TO-STRING WLENGTH)))
+	(SETQ
+		COUNT 0
+		RUNLENGTH 0
+		BP1 (CAR BOTTOM)
+		BP2 (CADR BOTTOM)
+		BOTTOM (CDR BOTTOM)
+	)
+	(PRINT (STRCAT "Pitch =" (VL-PRINC-TO-STRING (abs(*(/ (- (CADR BP2) (CADR BP1)) (- (CAR BP2) (CAR BP1))) 12))) "/12"))
+	(PRINT BOTTOM)
+	(if (> (abs(*(/ (- (CADR BP2) (CADR BP1)) (- (CAR BP2) (CAR BP1))) 12)) 1.1)
+		(setq
+			BP1
+				(LIST 
+					(CAR BP1)
+					(+ (CADR BP1) (*(/ (- (CADR BP2) (CADR BP1)) (- (CAR BP2) (CAR BP1))) (ATOI (CADR (CADR PINFO)))))
+					(CADDR BP1)
+				)
+		)
+	)
 	(WHILE ( < RUNLENGTH WLENGTH)
-	(PRINT "FUNCTION SHIT")
-	(SETQ RUNLENGTH WLENGTH)
+		(PRINT BP1)
+		(PRINT (*(/ (- (CADR BP2) (CADR BP1)) (- (CAR BP2) (CAR BP1))) (ATOI (CADR (CADR PINFO)))))
+		(setq
+			COUNT (1+ COUNT)
+			RUNLENGTH (+ RUNLENGTH (ATOI (CADR (CADR PINFO))))
+		)
+		(if (> (DISTANCE (LIST (CAR BP1) 0.0 0.0) (LIST (CAR BP2) 0.0 0.0)) (ATOI (CADR (CADR PINFO))))
+			(SETQ BP1
+					(LIST 
+						(+ (CAR BP1)(ATOI (CADR (CADR PINFO))))
+						(+ (CADR BP1) (*(/ (- (CADR BP2) (CADR BP1)) (- (CAR BP2) (CAR BP1))) (ATOI (CADR (CADR PINFO)))))
+						(CADDR BP1)
+					)
+			)
+			(PROGN
+				;;(SETQ BP1 
+				(PRINT
+						(LIST
+							(+ (CAR BP2) (- (ATOI (CADR (CADR PINFO))) (- (CAR BP2)(CAR BP1))))
+							
+					
+						)
+				)
+			)
+		)
 	)
+	(print (strcat "Number of Panels = " (ITOA COUNT)))
 	(print "end SBS-WALL-PANEL-CALC")
 )
 	
