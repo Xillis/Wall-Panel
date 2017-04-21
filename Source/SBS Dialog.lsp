@@ -1,6 +1,6 @@
 ;;Wall Properties dialog function
 (defun SBS_WallProperties ( PASSTHROUGH / PASSTHROUGH DFlag Spoints panel Wpoints)
-	(print "start SBS_WallProperties")
+	;;(print "start SBS_WallProperties")
 	(start_image "Wimage")
 		(fill_image 0 0 
 			(dimx_tile "Wimage")
@@ -40,13 +40,13 @@
 	(if (= Dflag 1)
 			(SBS-WALL-PANEL-CALC PASSTHROUGH)
 	)
-	(print "end SBS_WallProperties")
+	;;(print "end SBS_WallProperties")
 	(append PASSTHROUGH (list (list "DFlag" DFlag)))
 )
 
 ;;Wall image calculations
 (DEFUN SBS-WImage ( Points / Points Dpoint IPList LPoints ct 2Ponts)
-	(print "start SBS-WImage")
+	;;(print "start SBS-WImage")
 	(setq dpoint (CWL-MAXPOINT Points))
 	(setq IPList (CWL-ALIST (car DPoint) (caddr DPoint) 0.0 points))
 	(setq WX (1- (dimx_tile "Wimage")))
@@ -67,12 +67,12 @@
 			)
 			(vector_image  (car (car 2Points)) (cadr (car 2Points)) (car (cadr 2Points)) (cadr (cadr 2Points)) -16) 
 		)
-	(print "end SBS-WImage")
+	;;(print "end SBS-WImage")
 )
 
 ;;Panel information collection dialog Box
 (defun SBS_Panel_info ( Panel / RPBIT RWBIT RGBIT PBIT PLIST WBIT PRBIT GBIT )
-	(print "Start SBS_Panel_info")
+	;;(print "Start SBS_Panel_info")
 	(SETQ
 		RPBIT 47 ;;Panel bit Reference
 		RWBIT 16128 ;;Width Bit Reference
@@ -117,13 +117,13 @@
 		)
 	)
 	(setq DFlag (start_dialog))
-	(print "end SBS_Panel_info")
+	;;(print "end SBS_Panel_info")
 	(list (list "DFlag" DFlag) (list '"Panel info"  (+ PBIT WBIT PRBIT GBIT)))
 )
 
 ;;Generates the list data for gauge width and profile based on the panel chosen. renters the BIT coad for the panel
 (defun SBS-DIA-PAINSET (PVALUE RPBIT RWBIT WBIT RGBIT GBIT RSBIT PRBIT UTABLE / LINE)
-	(PRINT "START SBS-DIA-PAINSET")
+	;;(PRINT "START SBS-DIA-PAINSET")
 	(SETQ LINE (NTH PVALUE (CWL-BITLIST RPBIT UTABLE)))
 	(CWL-DDBCOAD (LOGAND (LAST LINE) RWBIT) "SBS-PANEL-INFO" "Width")
 	(IF (= (LOGAND (LAST LINE) WBIT) 0)
@@ -140,14 +140,14 @@
 		(SET_TILE "Profile" "0")
 		(SET_TILE "Profile" (CWL-TILESET PRBIT (logand (LAST LINE) RSBIT) "SBS-PANEL-INFO"))
 	)
-	(PRINT "END SBS-DIA-PAINSET")
+	;;(PRINT "END SBS-DIA-PAINSET")
 	(CAR LINE)
 )
 
 ;; creates a list based on a set bit list and renters the first value of the item at $value in the list 
 (defun SBS-DIA-GENSET (PBIT GENBIT UTABLE / )
-(PRINT "START SBS-DIA-GENSET")
+;;(PRINT "START SBS-DIA-GENSET")
 (SETQ LINE (NTH (READ $value) (CWL-BITLIST (LOGAND GENBIT (LAST (CAR (CWL-BITLIST PBIT UTABLE)))) UTABLE)))
-(PRINT "END SBS-DIA-GENSET")
+;;(PRINT "END SBS-DIA-GENSET")
 (CAR LINE)
 )
