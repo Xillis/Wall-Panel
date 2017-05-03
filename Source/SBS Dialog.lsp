@@ -1,5 +1,5 @@
 ;;Wall Properties dialog function
-(defun SBS_WallProperties ( PASSTHROUGH / PASSTHROUGH DFlag Spoints panel Wpoints)
+(defun SBS_WallProperties ( PASSTHROUGH / PASSTHROUGH DFlag Spoints panel Wpoints startp)
 	;;(print "start SBS_WallProperties")
 	(start_image "Wimage")
 		(fill_image 0 0 
@@ -19,6 +19,22 @@
 		(SETQ PANEL '("Panel info" 663553) 
 		)
 	)
+	(if (null (setq startp (cadr (assoc "Wall info" 	PASSTHROUGH))))
+		(SETQ STARTP "l")
+	)
+	(if (listp startp)
+		(set_tile "Startp" "p")
+		(set_tile "Startp" startp)
+	)
+	(action_tile "Startp" 
+		"(if (or (= $value \"l\") (= $value \"r\"))
+			(setq startp $value)
+			(progn
+				(setq v1 $value)
+				(Done_dialog 6)
+			)
+		)"
+	)
 	(action_tile "Ppoints" "(Done_dialog 3)")
 	(action_tile "Spoly" "(Done_dialog 4)")
 	(action_tile "SPType" "(Done_dialog 5)")
@@ -35,8 +51,11 @@
 		((= Dflag 5)
 			(setq Panel (CAR(CWL-START-DIA "SBS_Panel_info" "M" Panel )))
 		)
+		((= Dflag 6)
+			(SETQ startp (SBS-STARTP v1))
+		)
 	)
-	(setq PASSTHROUGH (list (list '"Wall Points" Wpoints) PANEL))
+	(setq PASSTHROUGH (list (list '"Wall Points" Wpoints) PANEL (list '"Wall info" startp )))
 	(if (= Dflag 1)
 			(SBS-WALL-PANEL-CALC PASSTHROUGH)
 	)
@@ -150,4 +169,12 @@
 (SETQ LINE (NTH (READ $value) (CWL-BITLIST (LOGAND GENBIT (LAST (CAR (CWL-BITLIST PBIT UTABLE)))) UTABLE)))
 ;;(PRINT "END SBS-DIA-GENSET")
 (CAR LINE)
+)
+
+;; panel start position routine
+(DEFUN SBS-STARTP ( V / V P)
+	(setq P (getpoint "select the start point for the panels:")) 
+	(print V)
+	(print p)
+	p
 )

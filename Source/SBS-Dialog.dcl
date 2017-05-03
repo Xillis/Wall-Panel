@@ -10,6 +10,24 @@ SBS_WallProperties : dialog {
 				width = 40;
 				aspect_ratio = 0.6666;
 			}
+			:radio_row {
+				label = "Start Point";
+				key = "Startp";
+				:radio_button {
+					label = "Left";
+					key = "l";
+				}
+				:radio_button {
+					label = "Pick point";
+					key = "p";
+					alignment = centered;
+				}
+				:radio_button {
+					label = "Right";
+					key = "r";
+					alignment = right;
+				}
+			}
 			:row {
 				:button {
 					label = "Pick Points";
