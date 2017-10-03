@@ -5,6 +5,7 @@
 	(setq PASSTHROUGH (CWL-START-DIA "SBS_WallProperties" "M" nil))
 	(CWL-SVVCF oldvar)
 	(PRINT PASSTHROUGH)
+	(print (CWL-BITLIST (cadr (assoc "Panel info" PASSTHROUGH)) "SBS-PANEL-INFO"))
 	;;(print "end SBS-WP")
 	(princ)
 )	
@@ -284,4 +285,28 @@
 		(vlax-invoke OBJ 'getdynamicblockproperties)
 	)
 	;;(print "End SBS-PANELINSERT")
+)
+
+;;SERCHES THE LIST OF COLOUR AVALABILITY BIT'S IN TEH COLOUR CHART AGAINST THE CURRENT PANEL AND RETERNS A LIST OF AVALABLE COLOURS
+(DEFUN SBS-COLOUR-CHART ( PBIT CTABLE AllFLAG / INFO POS RL PBIT CTABLE)
+	(SETQ 
+		INFO (VL-GET-RESOURCE CTABLE)
+		POS 1
+		RL " "
+	)
+	(START_LIST "Colour")
+		(WHILE (not (null RL))
+			(SETQ RL (NTH 2 (read (substr INFO POS ))))
+			(FOREACH x RL
+				(IF (= x(LOGAND x PBIT))
+					(ADD_LIST (STRCAT (CAR (read (substr INFO POS ))) " " (CADR (read (substr INFO POS )))))
+				)
+			)
+			(SETQ POS (+ POS 2))
+			(if (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))
+				(SETQ POS (+ POS (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))))
+				(setq rl nil)
+			)
+		)
+	(END_LIST)
 )

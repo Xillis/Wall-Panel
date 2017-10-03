@@ -137,7 +137,7 @@
 	2Point
 )
 
-;;Reterns the Max and Min 'x' and 'x' of a givin point list (XMin XMax YMin YMax)
+;;Reterns the Max and Min 'x' and 'y' of a givin point list (XMin XMax YMin YMax)
 (defun CWL-MAXPOINT ( Points / XL YL PointList Points)
 	;;(print "start CWL-MAXPOINT")
 	(SETQ XL (vl-sort-i Points (function (lambda (e1 e2) (< (car e1) (car e2))))))
@@ -145,6 +145,27 @@
 	(setq PointList (list (car (nth (car XL) points))(car (nth (last XL) points))(cadr (nth (car YL) points))(cadr (nth (last YL) points))))
 	;;(print "end CWL-MAXPOINT")
 	PointList
+)
+
+;;Creats a list from a table
+(defun CWL-CLIST ( TABLE / CLIST INFO POS RL )
+	;;(print "start CWL-CLIST")
+	(SETQ 
+		INFO (VL-GET-RESOURCE TABLE)
+		POS 1
+		RL " "
+	)
+	(WHILE (not (null RL))
+		(SETQ RL (read (substr INFO POS )))
+		(SETQ CLIST (APPEND (LIST RL) CLIST))
+		(SETQ POS (+ POS 2))
+		(if (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))
+			(SETQ POS (+ POS (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))))
+			(setq rl nil)
+		)
+	)
+	;;(print "END CWL-CLIST")
+	(reverse CLIST)
 )
 
 ;;Creates a list using a bit code and a table
@@ -230,3 +251,6 @@ VALU
 	(PRINT "END CWL-POINT-SPLIT")
 	(LIST LLIST RLIST)
 )
+
+;;SERCHES THE LIST OF COLOUR AVALABILITY BIT'S IN TEH COLOUR CHART AGAINST THE CURRENT PANEL AND RETERNS A LIST OF AVALABLE COLOURS
+(DEFUN 

@@ -41,8 +41,11 @@ SBS_WallProperties : dialog {
 		}
 		:boxed_column {
 			label = "Panel Properties";
-			:text {
-				key = "Pprop";
+			:list_box {
+				key = "panelinfo";
+				is_enabled = false;
+				fixed_width = true;
+				width = 23;
 			}
 			:button {
 				label = "Select Panel Type";
@@ -97,24 +100,25 @@ SBS_Panel_info : dialog {
 				fixed_width = true;
 				width = 23;
 			}
-			:toggle {
-				label = "Other";
-				key = "allColour";
+			:row {
+				:toggle {
+					label = "All";
+					key = "allColour";
+				}
+				:toggle {
+					label = "Other";
+					key = "OtherColour";
+				}
 			}
 		}
 		:spacer {width = 3;}
-		:boxed_column {
-			label = "Panel Features";
 			:list_box {
+				label = "Panel Features";
 				key = "Feature_list";
 				fixed_width = true;
-				width = 23;
+				multiple_select = true;
+				width = 25;
 			}
-			:button {
-				label = "Change";
-				key = "Fset";
-			}
-		}
 	}
 	ok_cancel; 
 }

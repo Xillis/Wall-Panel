@@ -19,7 +19,8 @@
 		(SETQ PANEL '("Panel info" 663553) 
 		)
 	)
-	(if (null (setq startp (cadr (assoc "Wall info" 	PASSTHROUGH))))
+	(CWL-DDBCOAD (CADR PANEL) "SBS-PANEL-INFO" "panelinfo")
+	(if (null (setq startp (cadr (assoc "Wall info" PASSTHROUGH))))
 		(SETQ STARTP "l")
 	)
 	(if (listp startp)
@@ -90,19 +91,22 @@
 )
 
 ;;Panel information collection dialog Box
-(defun SBS_Panel_info ( Panel / RPBIT RWBIT RGBIT PBIT PLIST WBIT PRBIT GBIT )
+(defun SBS_Panel_info ( Panel / RPBIT RWBIT RGBIT PBIT PLIST WBIT PRBIT GBIT BITREFLIST ALLFLAG)
 	;;(print "Start SBS_Panel_info")
+	(SETQ BITREFLIST (CWL-CLIST "SBS-REFERENCE-LIST"))
 	(SETQ
-		RPBIT 47 ;;Panel bit Reference
-		RWBIT 16128 ;;Width Bit Reference
-		RGBIT 507904 ;;Gauge Bit Reference
-		RSBIT 1572864 ;;Profile Bit Reference
+		RPBIT (CADR (ASSOC 'PANEL BITREFLIST)) ;;Panel bit Reference
+		RWBIT (CADR (ASSOC 'WIDTH BITREFLIST)) ;;Width Bit Reference
+		RGBIT (CADR (ASSOC 'GAUGE BITREFLIST)) ;;Gauge Bit Reference
+		RSBIT (CADR (ASSOC 'PROFILE BITREFLIST)) ;;Profile Bit Reference
+		RFBIT (CADR (ASSOC 'FEATURS BITREFLIST)) ;;Features Bit Reference
 	)
 	(setq 
 		PBIT (LOGAND (cadr (assoc "Panel info" Panel)) RPBIT)
 		WBIT (LOGAND (cadr (assoc "Panel info" Panel)) RWBIT)
 		PRBIT (LOGAND (cadr (assoc "Panel info" Panel)) RSBIT)
 		GBIT (LOGAND (cadr (assoc "Panel info" Panel)) RGBIT)
+		FBIT (LOGAND (cadr (assoc "Panel info" Panel)) RFBIT)
 	)
 	(CWL-DDBCOAD RPBIT "SBS-PANEL-INFO" "Panel_type")
 	(set_tile "Panel_type"
@@ -110,18 +114,31 @@
 	)
 	(SBS-DIA-PAINSET
 		(READ (CWL-TILESET PBIT RPBIT "SBS-PANEL-INFO"))
-	RPBIT RWBIT  WBIT RGBIT GBIT RSBIT PRBIT "SBS-PANEL-INFO")
+		RPBIT RWBIT  WBIT RGBIT GBIT RSBIT PRBIT RFBIT FBIT "SBS-PANEL-INFO")
+	(SBS-COLOUR-CHART (CADR (CAR PANEL)) "COLOUR_CHART" ALLFLAG)
 	(action_tile "Panel_type"
-		"(SETQ PBIT (SBS-DIA-PAINSET (READ $value) RPBIT RWBIT WBIT RGBIT GBIT RSBIT PRBIT \"SBS-PANEL-INFO\"))"
+		(STRCAT
+			"(SETQ PBIT (SBS-DIA-PAINSET (READ $value) RPBIT RWBIT WBIT RGBIT GBIT RSBIT PRBIT RFBIT FBIT \"SBS-PANEL-INFO\"))"
+			"(SBS-COLOUR-CHART (+ PBIT WBIT PRBIT GBIT) \"COLOUR_CHART\" ALLFLAG)"
+		)
 	)
 	(action_tile "Width"
-		"(SETQ WBIT (SBS-DIA-GENSET PBIT RWBIT \"SBS-PANEL-INFO\"))"
+		(STRCAT
+			"(SETQ WBIT (SBS-DIA-GENSET PBIT RWBIT \"SBS-PANEL-INFO\"))"
+			"(SBS-COLOUR-CHART (+ PBIT WBIT PRBIT GBIT) \"COLOUR_CHART\" ALLFLAG)"
+		)
 	)
 	(action_tile "Profile"
 		"(SETQ PRBIT (SBS-DIA-GENSET PBIT RSBIT \"SBS-PANEL-INFO\"))"
 	)
 	(action_tile "Gauge"
-		"(SETQ GBIT (SBS-DIA-GENSET PBIT RGBIT \"SBS-PANEL-INFO\"))"
+		(STRCAT
+			"(SETQ GBIT (SBS-DIA-GENSET PBIT RGBIT \"SBS-PANEL-INFO\"))"
+			"(SBS-COLOUR-CHART (+ PBIT WBIT PRBIT GBIT) \"COLOUR_CHART\" ALLFLAG)"
+		)
+	)
+	(action_tile "Feature_list"
+		"(print $value)"
 	)
 	(action_tile "accept"
 		(STRCAT
@@ -141,7 +158,7 @@
 )
 
 ;;Generates the list data for gauge width and profile based on the panel chosen. renters the BIT coad for the panel
-(defun SBS-DIA-PAINSET (PVALUE RPBIT RWBIT WBIT RGBIT GBIT RSBIT PRBIT UTABLE / LINE)
+(defun SBS-DIA-PAINSET (PVALUE RPBIT RWBIT WBIT RGBIT GBIT RSBIT PRBIT RFBIT FBIT UTABLE / LINE)
 	;;(PRINT "START SBS-DIA-PAINSET")
 	(SETQ LINE (NTH PVALUE (CWL-BITLIST RPBIT UTABLE)))
 	(CWL-DDBCOAD (LOGAND (LAST LINE) RWBIT) "SBS-PANEL-INFO" "Width")
@@ -158,6 +175,11 @@
 	(IF (= (LOGAND (LAST LINE) PRBIT) 0)
 		(SET_TILE "Profile" "0")
 		(SET_TILE "Profile" (CWL-TILESET PRBIT (logand (LAST LINE) RSBIT) "SBS-PANEL-INFO"))
+	)
+	(CWL-DDBCOAD (LOGAND (LAST LINE) RFBIT) "SBS-PANEL-INFO" "Feature_list")
+	(IF (= (LOGAND (LAST LINE) FBIT) 0)
+		(SET_TILE "Feature_list" "0")
+		(SET_TILE "Feature_list" (CWL-TILESET FBIT (logand (LAST LINE) RFBIT) "SBS-PANEL-INFO"))
 	)
 	;;(PRINT "END SBS-DIA-PAINSET")
 	(CAR LINE)
