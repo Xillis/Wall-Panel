@@ -5,7 +5,7 @@
 	(setq PASSTHROUGH (CWL-START-DIA "SBS_WallProperties" "M" nil))
 	(CWL-SVVCF oldvar)
 	(PRINT PASSTHROUGH)
-	(print (CWL-BITLIST (cadr (assoc "Panel info" PASSTHROUGH)) "SBS-PANEL-INFO"))
+	(print (CWL-BITTOLIST (cadr (assoc "Panel info" PASSTHROUGH)) "SBS-PANEL-INFO"))
 	;;(print "end SBS-WP")
 	(princ)
 )	
@@ -100,7 +100,7 @@
 	(setq
 		Top (cadr (assoc 'TOP Spoints))
 		Bottom (cadr (assoc 'BOTTOM SPoints))
-		PINFO (CWL-BITLIST (cadr (assoc "Panel info" PASSTHROUGH)) "SBS-PANEL-INFO")
+		PINFO (CWL-BITTOLIST (cadr (assoc "Panel info" PASSTHROUGH)) "SBS-PANEL-INFO")
 		SP (cadr (assoc "Wall info" PASSTHROUGH))
 	)
 	(cond 
@@ -287,26 +287,25 @@
 	;;(print "End SBS-PANELINSERT")
 )
 
-;;SERCHES THE LIST OF COLOUR AVALABILITY BIT'S IN TEH COLOUR CHART AGAINST THE CURRENT PANEL AND RETERNS A LIST OF AVALABLE COLOURS
-(DEFUN SBS-COLOUR-CHART ( PBIT CTABLE AllFLAG / INFO POS RL PBIT CTABLE)
+;;SERCHES THE LIST OF COLOUR AVALABILITY BIT'S IN THE COLOUR CHART AGAINST THE CURRENT PANEL AND RETERNS A LIST OF AVALABLE COLOURS
+(DEFUN SBS-COLOUR-CHART ( PBIT CTABLE AllFLAG / INFO POS RL PBIT CTABLE CLIST)
 	(SETQ 
 		INFO (VL-GET-RESOURCE CTABLE)
 		POS 1
 		RL " "
 	)
-	(START_LIST "Colour")
-		(WHILE (not (null RL))
-			(SETQ RL (NTH 2 (read (substr INFO POS ))))
-			(FOREACH x RL
-				(IF (= x(LOGAND x PBIT))
-					(ADD_LIST (STRCAT (CAR (read (substr INFO POS ))) " " (CADR (read (substr INFO POS )))))
-				)
-			)
-			(SETQ POS (+ POS 2))
-			(if (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))
-				(SETQ POS (+ POS (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))))
-				(setq rl nil)
+	(WHILE (not (null RL))
+		(SETQ RL (NTH 2 (read (substr INFO POS ))))
+		(FOREACH x RL
+			(IF (= x(LOGAND x PBIT))
+				(SETQ CLIST (APPEND CLIST (LIST (LIST (STRCAT (CAR (read (substr INFO POS ))) " " (CADR (read (substr INFO POS ))))))))
 			)
 		)
-	(END_LIST)
+		(SETQ POS (+ POS 2))
+		(if (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))
+			(SETQ POS (+ POS (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))))
+			(setq rl nil)
+		)
+	)
+	CLIST
 )

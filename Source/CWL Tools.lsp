@@ -157,7 +157,9 @@
 	)
 	(WHILE (not (null RL))
 		(SETQ RL (read (substr INFO POS )))
-		(SETQ CLIST (APPEND (LIST RL) CLIST))
+		(IF (not (null RL))
+			(SETQ CLIST (APPEND (LIST RL) CLIST))
+		)
 		(SETQ POS (+ POS 2))
 		(if (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))
 			(SETQ POS (+ POS (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))))
@@ -165,12 +167,11 @@
 		)
 	)
 	;;(print "END CWL-CLIST")
-	(reverse CLIST)
+	CLIST
 )
-
 ;;Creates a list using a bit code and a table
-(defun CWL-BITLIST ( SBIT UTABLE / POS RL ELIST INFO )
-	;;(print "start CWL-BITLIST")
+(defun CWL-BITTOLIST ( SBIT UTABLE / POS RL ELIST INFO )
+	;;(print "start CWL-BITTOLIST")
 	(SETQ 
 		INFO (VL-GET-RESOURCE UTABLE)
 		POS 1
@@ -179,7 +180,7 @@
 	(WHILE (not (null RL))
 		(SETQ RL (read (substr INFO POS )))
 		(IF (AND (not (null RL)) (/= (LOGAND SBIT (car RL)) 0))
-			(SETQ ELIST (APPEND (LIST RL) ELIST))
+			(SETQ ELIST (APPEND ELIST (LIST RL)))
 		)
 		(SETQ POS (+ POS 2))
 		(if (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))
@@ -187,19 +188,18 @@
 			(setq rl nil)
 		)
 	)
-	;;(print "END CWL-BITLIST")
-	(reverse ELIST)
+	;;(print "END CWL-BITTOLIST")
+	ELIST
 )
 
-;;populates a dialogue list from a list and bit table
-(defun CWL-DDBCOAD ( SBIT UTABLE DIAKEY / ELIST )
-	;;(print (strcat "start CWL-DDBCOAD - " DIAKEY))
-	(setq ELIST (CWL-BITLIST SBIT UTABLE))
+;;populates a dialogue list from a list
+(defun CWL-DBLIST ( ELIST DIAKEY POSITION / DIAKEY ELIST )
+	;;(print (strcat "start CWL-DBLIST - " DIAKEY))
 	(START_LIST DIAKEY)
 		(MAPCAR 'ADD_LIST 
 			(MAPCAR 
 				'(LAMBDA (i)
-					(CADR i)
+					(NTH POSITION i)
 				)
 			ELIST)
 		)
@@ -208,13 +208,13 @@
 		(MODE_TILE DIAKEY 1)
 		(MODE_TILE DIAKEY 0)
 	)
-	;;(print (strcat "end CWL-DDBCOAD - " DIAKEY))
+	;;(print (strcat "end CWL-DBLIST - " DIAKEY))
 )
 
 ;; creates a list based on a set bit list and renters the position of an item in the list based off the first value of the item
 (DEFUN CWL-TILESET (BIT BITRANGE UTABLE / )
 ;;(PRINT "START CWL-TILESET")
-(SETQ VLIST (CWL-BITLIST BITRANGE UTABLE))
+(SETQ VLIST (CWL-BITTOLIST BITRANGE UTABLE))
 (SETQ VALU (itoa (VL-POSITION (ASSOC BIT VLIST) VLIST)))
 ;;(PRINT "END CWL-TILESET")
 VALU
@@ -222,7 +222,7 @@ VALU
 
 ;;SPLITS A LIST OF PONTS AT A SPECIFIED POINT IN THE "X" DIRECTION
 (DEFUN CWL-POINT-SPLIT (POINTLIST POINT / POINTLIST POINT LLIST)
-	(PRINT "START CWL-POINT-SPLIT")
+	;;(PRINT "START CWL-POINT-SPLIT")
 	(FOREACH p POINTLIST
 		(IF (< (CAR P) (CAR POINT))
 			(SETQ LLIST (CONS p LLIST))
@@ -248,9 +248,6 @@ VALU
 			)
 		)
 	)
-	(PRINT "END CWL-POINT-SPLIT")
+	;;(PRINT "END CWL-POINT-SPLIT")
 	(LIST LLIST RLIST)
 )
-
-;;SERCHES THE LIST OF COLOUR AVALABILITY BIT'S IN TEH COLOUR CHART AGAINST THE CURRENT PANEL AND RETERNS A LIST OF AVALABLE COLOURS
-(DEFUN 
