@@ -1,5 +1,5 @@
 ;;Wall Properties dialog function
-(defun SBS_WallProperties ( PASSTHROUGH / PASSTHROUGH DFlag Spoints panel Wpoints startp)
+(defun SBS_WallProperties ( PASSTHROUGH / PASSTHROUGH DFlag panel)
 	;;(print "start SBS_WallProperties")
 	(start_image "Wimage")
 		(fill_image 0 0 
@@ -7,12 +7,12 @@
 			(dimy_tile "Wimage")
 			-15
 		)
-		(if (null (setq Wpoints(cadr (assoc "Wall Points" PASSTHROUGH))))
+		(if (null (cadr (assoc "Wall Points" PASSTHROUGH)))
 			(progn
 				(vector_image 0 0 (dimx_tile "Wimage") (dimy_tile "Wimage") -16)
 				(vector_image (dimx_tile "Wimage") 0 0 (dimy_tile "Wimage") -16)
 			)
-			(SBS-WIMAGE Wpoints)
+			(SBS-WIMAGE (cadr (assoc "Wall Points" PASSTHROUGH)))
 		)
 	(end_image)
 	(IF (NULL (setq PANEL (assoc "Panel info" PASSTHROUGH)))
@@ -22,21 +22,22 @@
 		(CWL-BITTOLIST (CADR PANEL) "SBS-PANEL-INFO")
 		"panelinfo" 1
 	)
-	;;(CWL-DDBCOAD (CADR PANEL) "SBS-PANEL-INFO" "panelinfo")
-	(if (null (setq startp (cadr (assoc "Wall info" PASSTHROUGH))))
-		(SETQ STARTP "l")
-	)
-	(if (listp startp)
-		(set_tile "Startp" "p")
-		(set_tile "Startp" startp)
+	(COND
+		((NOT (assoc "Wall info" PASSTHROUGH))
+			(SETQ PASSTHROUGH (APPEND PASSTHROUGH (list (LIST "Wall info" "l"))))
+			(set_tile "Startp" "l")
+		)
+		((listp (CADR (assoc "Wall info" PASSTHROUGH)))
+			(set_tile "Startp" "p")
+		)
+		(T
+			(set_tile "Startp" (CADR (assoc "Wall info" PASSTHROUGH)))
+		)
 	)
 	(action_tile "Startp" 
-		"(if (or (= $value \"l\") (= $value \"r\"))
-			(setq startp $value)
-			(progn
-				(setq v1 $value)
-				(Done_dialog 6)
-			)
+		"(SETQ PASSTHROUGH(SUBST (list \"Wall info\" $value) (ASSOC \"Wall info\" PASSTHROUGH) PASSTHROUGH))
+		(IF (= $value \"p\")
+			(Done_dialog 6)
 		)"
 	)
 	(action_tile "Ppoints" "(Done_dialog 3)")
@@ -46,25 +47,51 @@
 	(action_tile "cancel" "(print \"Cancel\")(done_dialog 0)")
 	(setq DFlag (start_dialog))
 	(cond
+		((= DFLAG 0)
+			(setq PASSTHROUGH (LIST '("CANCLE")))
+		)
 		((= DFlag 3) 
-			(setq Wpoints (CWL-FPOINT (SBS_Wallpoints) "Left"))
+			(setq PASSTHROUGH
+				(IF (ASSOC '"Wall Points" PASSTHROUGH)
+					(SUBST 
+						(list '"Wall Points" (CWL-FPOINT (SBS_Wallpoints) "Left"))
+						(ASSOC '"Wall Points" PASSTHROUGH)
+					PASSTHROUGH)
+					(APPEND (LIST (list '"Wall Points" (CWL-FPOINT (SBS_Wallpoints) "Left"))) PASSTHROUGH)
+				)
+			)
 		)
 		((= DFlag 4)
-			(setq Wpoints (CWL-FPOINT (CWL-PPOINTS) "Left"))
+			(setq PASSTHROUGH
+				(IF (ASSOC '"Wall Points" PASSTHROUGH)
+					(SUBST 
+						(list '"Wall Points" (CWL-FPOINT (CWL-PPOINTS) "Left"))
+						(ASSOC '"Wall Points" PASSTHROUGH)
+					PASSTHROUGH)
+					(APPEND (LIST (list '"Wall Points" (CWL-FPOINT (CWL-PPOINTS) "Left"))) PASSTHROUGH)
+				)
+			)
 		)
 		((= Dflag 5)
 			(setq Panel (CAR(CWL-START-DIA "SBS_Panel_info" "M" Panel )))
+			(setq PASSTHROUGH
+				(IF (assoc "Panel info" PASSTHROUGH)
+					(SUBST PANEL (assoc "Panel info" PASSTHROUGH) PASSTHROUGH)
+					(APPEND (LIST PANEL) PASSTHROUGH)
+				)
+			)
 		)
 		((= Dflag 6)
-			(SETQ startp (SBS-STARTP v1))
+			(SETQ PASSTHROUGH 
+				(SUBST
+					(list "Wall info" (getpoint "select the start point for the panels:"))
+					(ASSOC "Wall info" PASSTHROUGH)
+				PASSTHROUGH)
+			)	
 		)
 	)
-	(setq PASSTHROUGH (list (list '"Wall Points" Wpoints) PANEL (list '"Wall info" startp )))
-	(if (= Dflag 1)
-			(SBS-WALL-PANEL-CALC PASSTHROUGH)
-	)
 	;;(print "end SBS_WallProperties")
-	(append PASSTHROUGH (list (list "DFlag" DFlag)))
+	(SUBST (list "DFlag" DFlag) (ASSOC "DFlag" PASSTHROUGH) PASSTHROUGH)
 )
 
 ;;Wall image calculations
@@ -94,7 +121,7 @@
 )
 
 ;;Panel information collection dialog Box
-(defun SBS_Panel_info ( Panel / RPBIT RWBIT RGBIT PBIT PLIST WBIT PRBIT DFLAG GBIT BITREFLIST ALLFLAG)
+(defun SBS_Panel_info ( Panel / RPBIT RWBIT RGBIT PBIT PLIST WBIT PRBIT DFLAG GBIT BITREFLIST ALLFLAG TMPCOLOUR)
 	;;(print "Start SBS_Panel_info")
 	(SETQ BITREFLIST (CWL-CLIST "SBS-REFERENCE-LIST"))
 	(SETQ
@@ -110,6 +137,7 @@
 		PRBIT (LOGAND (cadr (assoc "Panel info" Panel)) RSBIT)
 		GBIT (LOGAND (cadr (assoc "Panel info" Panel)) RGBIT)
 		FBIT (LOGAND (cadr (assoc "Panel info" Panel)) RFBIT)
+		TMPCOLOUR (NTH 2 (assoc "Panel info" Panel))
 	)
 	(CWL-DBLIST
 		(CWL-BITTOLIST RPBIT "SBS-PANEL-INFO")
@@ -146,6 +174,9 @@
 			"(CWL-DBLIST (SBS-COLOUR-CHART (+ PBIT WBIT PRBIT GBIT FBIT) \"COLOUR_CHART\" ALLFLAG) \"Colour\" 0)"
 		)
 	)
+	(action_tile "Colour"
+		"(SETQ TMPCOLOUR  (VL-PRIN1-TO-STRING (READ (CAR (NTH (READ $VALUE) (SBS-COLOUR-CHART (CADR (CAR PANEL)) \"COLOUR_CHART\" ALLFLAG))))))"
+	)
 	(action_tile "Feature_list"
 		(strcat
 			"(setq FBIT (SBS-DIA-GENSET PBIT RFBIT \"SBS-PANEL-INFO\"))"
@@ -154,16 +185,16 @@
 	)
 	(action_tile "accept"
 		(STRCAT
-			"(PRINT \"accept\")
-			(SETQ PANEL (list '\"Panel info\"  (+ PBIT WBIT PRBIT GBIT FBIT)))
-			(done_dialog 1)"
+			"(PRINT \"accept\")"
+			"(SETQ PANEL (list '\"Panel info\"  (+ PBIT WBIT PRBIT GBIT FBIT) TMPCOLOUR))"
+			"(done_dialog 1)"
 		)
 	)
 	(action_tile "cancel"
 		(strcat 
-			"(print \"cancel\")
-			(SETQ PANEL (assoc \"Panel info\" Panel))
-			(done_dialog 0)"
+			"(print \"cancel\")"
+			"(SETQ PANEL (assoc \"Panel info\" Panel))"
+			"(done_dialog 0)"
 		)
 	)
 	(setq DFlag (start_dialog))
@@ -226,12 +257,4 @@
 	)
 ;;(PRINT "END SBS-DIA-GENSET")
 LINE
-)
-
-;; panel start position routine
-(DEFUN SBS-STARTP ( V / V P)
-	(setq P (getpoint "select the start point for the panels:")) 
-	(print V)
-	(print p)
-	p
 )

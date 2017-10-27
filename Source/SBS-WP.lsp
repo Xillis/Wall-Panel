@@ -3,9 +3,14 @@
 	;;(print "start SBS-WP")
 	(setq oldvar (CWL-SVVCF (list '("CMDECHO" 0) ;|'("OSMODE" 16384)|;)))
 	(setq PASSTHROUGH (CWL-START-DIA "SBS_WallProperties" "M" nil))
+	(if (/= (cadr (ASSOC '"Wall Points" PASSTHROUGH)) nil)
+			(progn
+				(print (CWL-BITTOLIST (cadr (assoc "Panel info" PASSTHROUGH)) "SBS-PANEL-INFO"))
+				(SBS-WALL-PANEL-CALC PASSTHROUGH)
+			)
+			(print "Operation Canceled")
+	)
 	(CWL-SVVCF oldvar)
-	(PRINT PASSTHROUGH)
-	(print (CWL-BITTOLIST (cadr (assoc "Panel info" PASSTHROUGH)) "SBS-PANEL-INFO"))
 	;;(print "end SBS-WP")
 	(princ)
 )	
@@ -94,7 +99,7 @@
 
 ;;main wall calculation function
 (defun SBS-WALL-PANEL-CALC ( PASSTHROUGH / PASSTHROUGH SPOINTS top bottom PINFO oldvar SP PW)
-	(print "start SBS-WALL-PANEL-CALC")
+	;;(print "start SBS-WALL-PANEL-CALC")
 	(setq oldvar (CWL-SVVCF (list '("OSMODE" 16384))))
 	(setq Spoints (SBS_POINT_SPLIT (CADR (assoc "Wall Points" PASSTHROUGH))))
 	(setq
@@ -105,9 +110,8 @@
 	)
 	(cond 
 		((listp SP)
-			(print sp)
-			(PRINT (SETQ BOTTOM (CWL-POINT-SPLIT BOTTOM SP)))
-			(PRINT (SETQ TOP (CWL-POINT-SPLIT TOP SP)))
+			(SETQ BOTTOM (CWL-POINT-SPLIT BOTTOM SP))
+			(SETQ TOP (CWL-POINT-SPLIT TOP SP))
 			(SBS-CALC-LOOP (CADR TOP) (CADR BOTTOM) PINFO (ATOI (CADR (CADR PINFO))))
 			(SBS-CALC-LOOP (REVERSE (CAR TOP)) (REVERSE (CAR BOTTOM)) PINFO (* -1 (ATOI (CADR (CADR PINFO)))))
 		)
@@ -115,12 +119,12 @@
 		(T (SBS-CALC-LOOP TOP BOTTOM PINFO (ATOI (CADR (CADR PINFO)))))
 	)
 	(CWL-SVVCF oldvar)
-	(print "end SBS-WALL-PANEL-CALC")
+	;;(print "end SBS-WALL-PANEL-CALC")
 )
 	
 ;;Panel insert loop
 (defun SBS-CALC-LOOP (TOP BOTTOM PINFO PW / COUNT PINFO WLENGTH PW RUNLENGTH BPOINTS TPOINTS FLAG DELTALENGTHB PLENGTH DELTALENGTHT)
-	(print "start SBS-CALC-LOOP")
+	;;(print "start SBS-CALC-LOOP")
 	(SETQ
 		WLENGTH (DISTANCE (LIST (CAR (CAR BOTTOM)) 0.0 0.0) (LIST (CAR (LAST BOTTOM)) 0.0 0.0))
 		COUNT 0
@@ -135,7 +139,6 @@
 			WLENGTH (- WLENGTH PW)
 		)
 	)
-	(PRINT WLENGTH)
 	(WHILE ( < RUNLENGTH WLENGTH)
 		(setq
 			COUNT (1+ COUNT)
@@ -145,7 +148,6 @@
 			PLENGTH (- (CADR (CAR TPOINTS)) (CADR (CAR BPOINTS)))
 			FLAG 0
 		)
-		(print DELTALENGTHT)
 		(SBS-PANELINSERT 
 			(COND
 				((OR
@@ -208,7 +210,7 @@
 		(SETQ TPOINTS (SBS-POINT-CALC TPOINTS PW TOP ))
 	)
 	(print (strcat "Number of Panels = " (ITOA COUNT)))
-	(print "end SBS-CALC-LOOP")
+	;;(print "end SBS-CALC-LOOP")
 )
 
 ;;CALCULATES THE NEXT POINT ALONG A LINE FROM START TO END AT A GIVIN DISTANCE	
@@ -267,8 +269,6 @@
 ;;INSERTS A PANEL AND SETS ITS PROPERTIES
 (defun SBS-PANELINSERT ( BP PL PINFO / )
 	;;(print "Start SBS-PANELINSERT")
-	(PRINT BP)
-	(PRINT PL)
 	(setq PANEL (STRCAT(CADR (CAR PINFO))(CADR (CADR PINFO))))
 	(VL-LOAD-COM)
 	(command "_.-insert" PANEL BP "" "" "")
