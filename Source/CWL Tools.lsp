@@ -194,8 +194,8 @@
 
 ;;populates a dialogue list from a list
 (defun CWL-DBLIST ( ELIST DIAKEY POSITION / DIAKEY ELIST )
-	;;(print (strcat "start CWL-DBLIST - " DIAKEY))
-	(START_LIST DIAKEY)
+;;	(print (strcat "start CWL-DBLIST - " DIAKEY))
+	(START_LIST DIAKEY 2 0)
 		(MAPCAR 'ADD_LIST 
 			(MAPCAR 
 				'(LAMBDA (i)
@@ -204,20 +204,16 @@
 			ELIST)
 		)
 	(END_LIST)
-	(IF (< (LENGTH ELIST) 2)
-		(MODE_TILE DIAKEY 1)
-		(MODE_TILE DIAKEY 0)
-	)
-	;;(print (strcat "end CWL-DBLIST - " DIAKEY))
+;;	(print (strcat "end CWL-DBLIST - " DIAKEY))
 )
 
 ;; creates a list based on a set bit list and renters the position of an item in the list based off the first value of the item
-(DEFUN CWL-TILESET (BIT BITRANGE UTABLE / )
+(DEFUN CWL-TILESET (BIT BITRANGE UTABLE / VALUE VLIST)
 ;;(PRINT "START CWL-TILESET")
-(SETQ VLIST (CWL-BITTOLIST BITRANGE UTABLE))
-(SETQ VALU (itoa (VL-POSITION (ASSOC BIT VLIST) VLIST)))
+	(SETQ VLIST (CWL-BITTOLIST BITRANGE UTABLE)))
+	(SETQ VALUE (itoa (VL-POSITION (ASSOC BIT VLIST) VLIST))))
 ;;(PRINT "END CWL-TILESET")
-VALU
+VALUE
 )
 
 ;;SPLITS A LIST OF PONTS AT A SPECIFIED POINT IN THE "X" DIRECTION

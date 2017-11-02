@@ -120,5 +120,11 @@ SBS_Panel_info : dialog {
 				width = 25;
 			}
 	}
+	:row {
+		:text {
+			key = "Alerttext";
+			height = 4;
+		}
+	}
 	ok_cancel; 
 }

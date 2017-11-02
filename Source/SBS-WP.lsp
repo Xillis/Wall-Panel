@@ -309,3 +309,31 @@
 	)
 	CLIST
 )
+
+;;Checks the panel info bit for a specific bit then resets it to a new value
+(defun SBS-BITSET ( PANEL_INFO MASK / )
+	(SETQ PANEL_INFO
+		(IF (assoc "Panel info" PANEL_INFO)
+			(SUBST
+				(LIST "Panel info"
+					(CAR
+						(NTH (READ $VALUE)
+							(CWL-BITTOLIST MASK "SBS-PANEL-INFO")
+						)
+					)
+				)
+				(assoc "Panel info" PANEL_INFO)
+			PANEL_INFO)
+			(APPEND
+				(LIST "Panel info"
+					(CAR
+						(NTH (READ $VALUE)
+							(CWL-BITTOLIST MASK "SBS-PANEL-INFO")
+						)
+					)
+				)
+			PANEL_INFO)
+		)
+	)
+	PANEL_INFO
+)
