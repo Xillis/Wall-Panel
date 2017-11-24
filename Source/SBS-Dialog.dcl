@@ -105,8 +105,13 @@ SBS_Panel_info : dialog {
 					label = "All";
 					key = "allColour";
 				}
+			}
+			:row {
 				:toggle {
 					label = "Other";
+					key = "Othertog";
+				}
+				:edit_box {
 					key = "OtherColour";
 				}
 			}

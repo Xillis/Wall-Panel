@@ -288,25 +288,42 @@
 )
 
 ;;SERCHES THE LIST OF COLOUR AVALABILITY BIT'S IN THE COLOUR CHART AGAINST THE CURRENT PANEL AND RETERNS A LIST OF AVALABLE COLOURS
-(DEFUN SBS-COLOUR-CHART ( PBIT CTABLE AllFLAG / INFO POS RL PBIT CTABLE CLIST)
+(DEFUN SBS-COLOUR-CHART ( PBIT CTABLE / INFO POS RL PBIT CTABLE CLIST)
+;;(print "Start SBS-COLOUR-CHART")
 	(SETQ 
 		INFO (VL-GET-RESOURCE CTABLE)
 		POS 1
 		RL " "
 	)
-	(WHILE (not (null RL))
-		(SETQ RL (NTH 2 (read (substr INFO POS ))))
-		(FOREACH x RL
-			(IF (= x(LOGAND x PBIT))
-				(SETQ CLIST (APPEND CLIST (LIST (LIST (STRCAT (CAR (read (substr INFO POS ))) " " (CADR (read (substr INFO POS ))))))))
+	(IF (= (GET_TILE "allColour") "0")
+		(progn
+			(WHILE (not (null RL))
+				(SETQ RL (NTH 2 (read (substr INFO POS ))))
+				(FOREACH x RL
+					(IF (= x(LOGAND x PBIT))
+						(SETQ CLIST (APPEND CLIST (LIST (LIST (STRCAT (CAR (read (substr INFO POS ))) " " (CADR (read (substr INFO POS ))))))))
+					)
+				)
+				(SETQ POS (+ POS 2))
+				(if (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))
+					(SETQ POS (+ POS (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))))
+					(setq rl nil)
+				)
 			)
 		)
-		(SETQ POS (+ POS 2))
-		(if (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))
-			(SETQ POS (+ POS (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))))
-			(setq rl nil)
+		(progn
+			(WHILE (not (null RL))
+				(SETQ RL (NTH 2 (read (substr INFO POS ))))
+				(SETQ CLIST (APPEND CLIST (LIST (LIST (STRCAT (CAR (read (substr INFO POS ))) " " (CADR (read (substr INFO POS ))))))))
+				(SETQ POS (+ POS 2))
+				(if (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))
+					(SETQ POS (+ POS (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))))
+					(setq rl nil)
+				)
+			)
 		)
 	)
+;;(print "End SBS-COLOUR-CHART")
 	CLIST
 )
 

@@ -122,7 +122,6 @@
 ;;Panel information collection dialog Box
 (defun SBS_Panel_info ( PASSTHROUGH /  PANEL_INFO ALLFLAG )
 ;;	(print "Start SBS_Panel_info")
-(print PASSTHROUGH)
 	(CWL-DBLIST
 		(CWL-BITTOLIST 
 			(CADR (ASSOC 'PANEL 
@@ -130,72 +129,32 @@
 			"SBS-PANEL-INFO")
 		"Panel_type" 1
 	)
+	(MODE_TILE "OtherColour" 1)
 	(IF (assoc "Panel info" PASSTHROUGH)
 		(PROGN
+			(SETQ PANEL_INFO (assoc "Panel info" PASSTHROUGH))
 			(SET_TILE "Panel_type" 
 				(CWL-TILESET
 					(LOGAND
-						(CADR (assoc "Panel info" PASSTHROUGH))
+						(CADR PANEL_INFO)
 						(CADR (ASSOC 'PANEL (CWL-CLIST "SBS-REFERENCE-LIST")))
 					)	
 						(CADR (ASSOC 'PANEL (CWL-CLIST "SBS-REFERENCE-LIST")))
 						"SBS-PANEL-INFO"
 				)
 			)
-			(SETQ PANEL_INFO (assoc "Panel info" PASSTHROUGH))
-			(SBS-DIA-DLIST "Width" 
-				(CADR (ASSOC 'WIDTH (CWL-CLIST "SBS-REFERENCE-LIST")))
-				(READ (GET_TILE "Panel_type"))
-			)
-			(SET_TILE "Width" 
-				(CWL-TILESET
-					(LOGAND
-						(CADR (assoc "Panel info" PASSTHROUGH))
-						(CADR (ASSOC 'WIDTH (CWL-CLIST "SBS-REFERENCE-LIST")))
-					)
-					(CADR (ASSOC 'WIDTH (CWL-CLIST "SBS-REFERENCE-LIST")))
-					"SBS-PANEL-INFO"
-				)
-			)
-			(SBS-DIA-DLIST "Gauge"
-				(CADR (ASSOC 'GAUGE (CWL-CLIST "SBS-REFERENCE-LIST")))
-				(READ (GET_TILE "Panel_type"))
-			)
-			(SET_TILE "Gauge" 
-				(CWL-TILESET
-					(LOGAND
-						(CADR (assoc "Panel info" PASSTHROUGH))
-						(CADR (ASSOC 'GAUGE (CWL-CLIST "SBS-REFERENCE-LIST")))
-					)
-					(CADR (ASSOC 'GAUGE (CWL-CLIST "SBS-REFERENCE-LIST")))
-					"SBS-PANEL-INFO"
-				)
-			)
-			(SBS-DIA-DLIST "Profile"
-				(CADR (ASSOC 'PROFILE (CWL-CLIST "SBS-REFERENCE-LIST")))
-				(READ (GET_TILE "Panel_type"))
-			)
-			(SET_TILE "Profile" 
-				(CWL-TILESET
-					(LOGAND
-						(CADR (assoc "Panel info" PASSTHROUGH))
-						(CADR (ASSOC 'PROFILE (CWL-CLIST "SBS-REFERENCE-LIST")))
-					)
-					(CADR (ASSOC 'PROFILE (CWL-CLIST "SBS-REFERENCE-LIST")))
-					"SBS-PANEL-INFO"
-				)
-			)
-			(CWL-DBLIST (SBS-COLOUR-CHART (cadr PANEL_INFO) "COLOUR_CHART" ALLFLAG) "Colour" 0)
+			(SBS-DIA-PPSET PANEL_INFO)
 		)
 	)
 	(SBS-DIA-PCHECK PANEL_INFO)
 	(action_tile "Panel_type"
 		(STRCAT
-			"(SETQ PANEL_INFO (LIST \"Panel info\" (CAR (NTH (READ $VALUE) (CWL-BITTOLIST (CADR (ASSOC 'PANEL (CWL-CLIST \"SBS-REFERENCE-LIST\"))) \"SBS-PANEL-INFO\")))))"
-			"(SBS-DIA-DLIST \"Width\" (CADR (ASSOC 'WIDTH (CWL-CLIST \"SBS-REFERENCE-LIST\"))) (READ $VALUE))"
-			"(SBS-DIA-DLIST \"Gauge\" (CADR (ASSOC 'GAUGE (CWL-CLIST \"SBS-REFERENCE-LIST\"))) (READ $VALUE))"
-			"(SBS-DIA-DLIST \"Profile\" (CADR (ASSOC 'PROFILE (CWL-CLIST \"SBS-REFERENCE-LIST\"))) (READ $VALUE))"
-			"(CWL-DBLIST (SBS-COLOUR-CHART (cadr PANEL_INFO) \"COLOUR_CHART\" ALLFLAG) \"Colour\" 0)"
+			"(IF (NULL PANEL_INFO)
+				(SETQ PANEL_INFO (LIST \"Panel info\" (CAR (NTH (READ $VALUE) (CWL-BITTOLIST (CADR (ASSOC 'PANEL (CWL-CLIST \"SBS-REFERENCE-LIST\"))) \"SBS-PANEL-INFO\")))))
+				(SETQ PANEL_INFO (SBS-DIA-GENSET (CADR (ASSOC 'PANEL (CWL-CLIST \"SBS-REFERENCE-LIST\"))) PANEL_INFO \"SBS-PANEL-INFO\" (READ $VALUE)))
+			)"
+			"(CWL_LISTRESET \"Colour\")"
+			"(SETQ PANEL_INFO (SBS-DIA-PPSET PANEL_INFO))"
 			"(SETQ PANEL_INFO (SBS-DIA-BITFIX PANEL_INFO))"
 			"(SBS-DIA-PCHECK PANEL_INFO)"
 		)
@@ -203,8 +162,9 @@
 	(action_tile "Width"
 		(STRCAT 
 			"(SETQ PANEL_INFO (SBS-DIA-GENSET (CADR (ASSOC 'WIDTH (CWL-CLIST \"SBS-REFERENCE-LIST\"))) PANEL_INFO \"SBS-PANEL-INFO\" (1- (READ $VALUE))))"
-			"(CWL-DBLIST (SBS-COLOUR-CHART (cadr PANEL_INFO) \"COLOUR_CHART\" ALLFLAG) \"Colour\" 0)"
+			"(CWL_LISTRESET \"Colour\")"
 			"(SBS-DIA-PCHECK PANEL_INFO)"
+			"(SBS-DIA-PPSET PANEL_INFO)"
 		)
 	)
 	(action_tile "Profile"
@@ -216,13 +176,41 @@
 	(action_tile "Gauge"
 		(STRCAT
 			"(SETQ PANEL_INFO (SBS-DIA-GENSET (CADR (ASSOC 'GAUGE (CWL-CLIST \"SBS-REFERENCE-LIST\"))) PANEL_INFO \"SBS-PANEL-INFO\" (1- (READ $VALUE))))"
-			"(CWL-DBLIST (SBS-COLOUR-CHART (cadr PANEL_INFO) \"COLOUR_CHART\" ALLFLAG) \"Colour\" 0)"
+			"(CWL_LISTRESET \"Colour\")"
+			"(SBS-DIA-PCHECK PANEL_INFO)"
+			"(SBS-DIA-PPSET PANEL_INFO)"
+		)
+	)
+	(action_tile "Othertog" 
+		"(if (= $value \"0\")
+			(progn
+				(MODE_TILE \"OtherColour\" 1)
+				(MODE_TILE \"Colour\" 0)
+			)
+			(progn
+				(MODE_TILE \"OtherColour\" 0)
+				(MODE_TILE \"Colour\" 1)
+			)
+		)"
+	)
+	(action_tile "allColour"
+		(strcat
+			"(CWL_LISTRESET \"Colour\")"
+			"(CWL-DBLIST (SBS-COLOUR-CHART (cadr PANEL_INFO) \"COLOUR_CHART\") \"Colour\" 0)"
+		)
+	)
+	(action_tile "Colour"
+		(STRCAT
+			"(SETQ PANEL_INFO
+				(LIST
+					(CAR PANEL_INFO)
+					(CADR PANEL_INFO)
+					(VL-PRIN1-TO-STRING (READ (CAR (NTH (READ $VALUE) (SBS-COLOUR-CHART (CADR PANEL_INFO) \"COLOUR_CHART\")))))
+				)
+			)"
 			"(SBS-DIA-PCHECK PANEL_INFO)"
 		)
 	)
-	;;(action_tile "Colour"
-	;;	"(SETQ TMPCOLOUR  (VL-PRIN1-TO-STRING (READ (CAR (NTH (READ $VALUE) (SBS-COLOUR-CHART (CADR (CAR PANEL)) \"COLOUR_CHART\" ALLFLAG))))))"
-	;;)
 	;;(action_tile "Feature_list"
 	;;	(strcat
 	;;		"(setq FBIT (SBS-DIA-GENSET PBIT RFBIT \"SBS-PANEL-INFO\"))"
@@ -260,22 +248,28 @@
 		(LOGIOR
 			(- (CADR PANEL_INFO)  (LOGAND (CADR PANEL_INFO) GENBIT))
 			(CAR (NTH VALUE
-				(CWL-BITTOLIST
-					(LOGAND
-						(LAST
-							(CAR
-								(CWL-BITTOLIST
-									(LOGAND
-										(CADR (ASSOC 'PANEL (CWL-CLIST "SBS-REFERENCE-LIST")))
-										(CADR PANEL_INFO)
+				(IF (= (CADR (ASSOC 'PANEL (CWL-CLIST "SBS-REFERENCE-LIST"))) GENBIT)
+					(CWL-BITTOLIST
+						(CADR (ASSOC 'PANEL (CWL-CLIST "SBS-REFERENCE-LIST")))
+						"SBS-PANEL-INFO"
+					)
+					(CWL-BITTOLIST
+						(LOGAND
+							(LAST
+								(CAR
+									(CWL-BITTOLIST
+										(LOGAND
+											(CADR (ASSOC 'PANEL (CWL-CLIST "SBS-REFERENCE-LIST")))
+											(CADR PANEL_INFO)
+										)
+										"SBS-PANEL-INFO"
 									)
-									"SBS-PANEL-INFO"
 								)
 							)
+							GENBIT
 						)
-						GENBIT
+						"SBS-PANEL-INFO"
 					)
-					"SBS-PANEL-INFO"
 				)
 			))
 		)
@@ -332,6 +326,9 @@
 			(IF (= (LOGAND (CADR PANEL_INFO) (CADR (ASSOC 'PROFILE (CWL-CLIST "SBS-REFERENCE-LIST")))) 0)
 				(SETQ ALERTTEXT (STRCAT ALERTTEXT "No Panel Profile Selected\n"))
 			)
+			(if (null (caddr PANEL_INFO))
+				(SETQ ALERTTEXT (STRCAT ALERTTEXT "No Colour Selected\n"))
+			)
 		)
 	)
 	(IF (= ALERTTEXT "ERROR:\n")
@@ -356,5 +353,77 @@
 		(SETQ PANEL_INFO (SBS-DIA-GENSET (CADR (ASSOC 'PROFILE (CWL-CLIST "SBS-REFERENCE-LIST"))) PANEL_INFO "SBS-PANEL-INFO" 0))
 	)
 PANEL_INFO
+)
+
+;;SETS PANAL PROPERTIES LISTS AND SETS TO EXISTING VALUES
+(DEFUN SBS-DIA-PPSET (PANEL_INFO / )
+;;(print "start SBS-DIA-PPSET")
+	(FOREACH l '((WIDTH "Width") (GAUGE "Gauge") (PROFILE "Profile"))
+		(SBS-DIA-DLIST (CADR l)
+			(CADR (ASSOC (CAR l) (CWL-CLIST "SBS-REFERENCE-LIST")))
+			(ATOI (GET_TILE "Panel_type"))
+		)
+		(IF 
+			(> 
+				(LOGAND
+					(CADR PANEL_INFO)
+					(LOGAND	
+						(LAST (CAR
+							(CWL-BITTOLIST
+								(LOGAND
+									(CADR (ASSOC 'PANEL (CWL-CLIST "SBS-REFERENCE-LIST")))
+									(CADR PANEL_INFO)
+								)
+								"SBS-PANEL-INFO"
+							)
+						))
+						(CADR (ASSOC (CAR l) (CWL-CLIST "SBS-REFERENCE-LIST")))
+					)
+				)
+			
+			0)
+			(SET_TILE (CADR l) 
+				(ITOA (1+ (ATOI (CWL-TILESET
+					(LOGAND
+						(CADR PANEL_INFO)
+						(CADR (ASSOC (CAR l) (CWL-CLIST "SBS-REFERENCE-LIST")))
+					)
+					(LOGAND	
+						(LAST (CAR
+							(CWL-BITTOLIST
+								(LOGAND
+									(CADR (ASSOC 'PANEL (CWL-CLIST "SBS-REFERENCE-LIST")))
+									(CADR PANEL_INFO)
+								)
+								"SBS-PANEL-INFO"
+							)
+						))
+						(CADR (ASSOC (CAR l) (CWL-CLIST "SBS-REFERENCE-LIST")))
+					)
+					"SBS-PANEL-INFO"
+				))))
+			)
+			(SETQ PANEL_INFO
+				(LIST
+					(CAR PANEL_INFO)
+					(- 
+						(CADR PANEL_INFO)
+						(LOGAND
+							(CADR PANEL_INFO)
+							(LOGAND
+								(CADR PANEL_INFO)
+								(CADR (ASSOC (CAR l) (CWL-CLIST "SBS-REFERENCE-LIST")))
+							)
+						)
+					)
+				)
+			)
+		)
+	)
+	(CWL_LISTRESET "Colour")
+	(CWL-DBLIST (SBS-COLOUR-CHART (cadr PANEL_INFO) "COLOUR_CHART") "Colour" 0)
+	
+;;	(print "end SBS-DIA-PPSET")
+	PANEL_INFO
 )
 	 
