@@ -1,4 +1,4 @@
-SBS_WallProperties : dialog {
+SBS-DIA-Wall-Properties : dialog {
 	label = "Wall Information";
 	key = "dlg_WProp";
 	:row {

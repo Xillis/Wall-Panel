@@ -1,0 +1,15 @@
+;;; Visual LISP make file [V1.0] Wall-Tabels saved to:[C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source] at:[2/5/18] 
+(PRV-DEF (:target . "Wall-Tabels.VLX")
+	 (:active-x . T)
+	 (:separate-namespace)
+	 (:protected . T)
+	 (:load-file-list)
+	 (:require-file-list
+	   (:txt "Colour_Chart.SBS")
+	   (:txt "SBS-PANEL-INFO.SBS")
+	 )
+	 (:ob-directory)
+	 (:tmp-directory)
+	 (:optimization . st)
+)
+;; EOF

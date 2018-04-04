@@ -1,126 +1,12 @@
-;;wall creation function for Steelway building systems
-(DEFUN C:SBS-WP (/ oldvar PASSTHROUGH )
-	;;(print "start SBS-WP")
-	(setq oldvar (CWL-SVVCF (list '("CMDECHO" 0) ;|'("OSMODE" 16384)|;)))
-	(setq PASSTHROUGH (CWL-START-DIA "SBS_WallProperties" "M" nil))
-	(if (/= (cadr (ASSOC '"Wall Points" PASSTHROUGH)) nil)
-			(progn
-				(print (CWL-BITTOLIST (cadr (assoc "Panel info" PASSTHROUGH)) "SBS-PANEL-INFO"))
-				(SBS-WALL-PANEL-CALC PASSTHROUGH)
-			)
-			(print "Operation Canceled")
-	)
-	(CWL-SVVCF oldvar)
-	;;(print "end SBS-WP")
-	(princ)
-)	
 
-;;Wall points selection function
-(DEFUN SBS_Wallpoints ( / WPOINT WPLIST )
-	;;(print "start SBS_Wallpoints")
-	(SETQ WPOINT (GETPOINT "\nSelect the base point on the start side of the wall"))
-	(SETQ WPLIST (list WPOINT))
-	(WHILE (/= WPOINT nil)
-		(SETQ WPOINT (GETPOINT WPOINT "\nselect the next point"))
-		(IF (/= WPOINT nil)
-			(SETQ WPLIST (append WPLIST (list WPOINT)))
-		)
-	)
-	;;(print "end SBS_Wallpoints")
-	WPLIST
-)
 
-;;Splits the wall polyline in to roof points and floor points. outputs list ((RoofL "points") (FloorL "points") 
-(DEFUN SBS_POINT_SPLIT ( pointlist / pointlist tempP RP Tpoints Bpoints comblist)
-	;;(print "Start CWL_POINT_SPLIT")
-	(if (> (cadr (cadr pointlist)) (cadr (last pointlist)))
-		(SETQ
-			TempP (list (car pointlist))
-			pointlist (CDR pointlist)
-			pointlist (APPEND pointlist TempP)
-			Pointlist (reverse pointlist)
-		)
-	)
-	(setq
-		RP (car (vl-sort-i pointlist (function (lambda (e1 e2) (> (car e1) (car e2))))))
-		Tpoints (reverse (member (nth RP pointlist) pointlist))
-		Bpoints (reverse (cdr (member (nth RP pointlist) (reverse pointlist))))
-	)
-	(cond
-		((and (/= (rtos (car (car Tpoints))) (rtos (car (car Bpoints)))) (/= (rtos (car (last Tpoints))) (rtos (car (last Bpoints))))) 
-			(setq comblist (SBS_PS_FIXLEFT Tpoints Bpoints))
-			(setq comblist (SBS_PS_FIXRIGHT (cadr (assoc 'TOP comblist)) (cadr (assoc 'BOTTOM comblist))))
-		)
-		((/= (rtos (car (car Tpoints))) (rtos (car (car Bpoints))))
-			(setq comblist (SBS_PS_FIXLEFT Tpoints Bpoints))
-		)
-		((/= (rtos (car (last Tpoints))) (rtos (car (last Bpoints))))
-			(setq comblist (SBS_PS_FIXRIGHT Tpoints Bpoints))		
-		)
-		(t 
-			(setq Comblist (SBS_PS_COMBLIST tpoints Bpoints))
-		)
-	)
-	;;(print "End CWL_POINT_SPLIT")
-	Comblist
-)
 
-;;sorts the wall point based on orgin to be sorted from the left
-(DEFUN SBS_PS_FIXLEFT ( Tpoints Bpoints / Tpoints Bpoints comblist )
-	;;(print "start SBS_PS_FIXLEFT")
-	(if (< (car (car Tpoints)) (car (car Bpoints)))
-		(setq Bpoints (append (list (car tpoints)) Bpoints))	
-		(setq Tpoints (append (list (car Bpoints)) Tpoints))
-	)
-	(setq Comblist (SBS_PS_COMBLIST tpoints Bpoints))
-	;;(print "end SBS_PS_FIXLEFT")
-	comblist
-)
 
-;;sorts the wall point based on orgin to be sorted from the right
-(DEFUN SBS_PS_FIXRIGHT ( Tpoints Bpoints / Tpoints Bpoints comblist )
-	;;(print "start SBS_PS_FIXRIGHT")
-	(if (> (car (last Tpoints)) (car (last Bpoints)))
-		(setq Bpoints (append Bpoints (list (last tpoints))))
-		(setq Tpoints (append Tpoints (list (last Bpoints))))
-	)
-	(setq Comblist (SBS_PS_COMBLIST tpoints Bpoints))
-	;;(print "end SBS_PS_FIXRIGHT")
-	comblist
-)
 
-;;combines the sorted wall points in a list
-(defun SBS_PS_COMBLIST ( Tpoints Bpoints / Tpoints Bpoints Comblist )
-	;;(print "start SBS_PS_COMBLIST")
-	(setq Comblist (list (list 'Top Tpoints) (list  'Bottom Bpoints)))
-	;;(print "end SBS_PS_COMBLIST")
-	Comblist
-)
 
-;;main wall calculation function
-(defun SBS-WALL-PANEL-CALC ( PASSTHROUGH / PASSTHROUGH SPOINTS top bottom PINFO oldvar SP PW)
-	;;(print "start SBS-WALL-PANEL-CALC")
-	(setq oldvar (CWL-SVVCF (list '("OSMODE" 16384))))
-	(setq Spoints (SBS_POINT_SPLIT (CADR (assoc "Wall Points" PASSTHROUGH))))
-	(setq
-		Top (cadr (assoc 'TOP Spoints))
-		Bottom (cadr (assoc 'BOTTOM SPoints))
-		PINFO (CWL-BITTOLIST (cadr (assoc "Panel info" PASSTHROUGH)) "SBS-PANEL-INFO")
-		SP (cadr (assoc "Wall info" PASSTHROUGH))
-	)
-	(cond 
-		((listp SP)
-			(SETQ BOTTOM (CWL-POINT-SPLIT BOTTOM SP))
-			(SETQ TOP (CWL-POINT-SPLIT TOP SP))
-			(SBS-CALC-LOOP (CADR TOP) (CADR BOTTOM) PINFO (ATOI (CADR (CADR PINFO))))
-			(SBS-CALC-LOOP (REVERSE (CAR TOP)) (REVERSE (CAR BOTTOM)) PINFO (* -1 (ATOI (CADR (CADR PINFO)))))
-		)
-		((= SP "r") (SBS-CALC-LOOP (REVERSE TOP) (REVERSE BOTTOM) PINFO (* -1 (ATOI (CADR (CADR PINFO))))))
-		(T (SBS-CALC-LOOP TOP BOTTOM PINFO (ATOI (CADR (CADR PINFO)))))
-	)
-	(CWL-SVVCF oldvar)
-	;;(print "end SBS-WALL-PANEL-CALC")
-)
+
+
+
 	
 ;;Panel insert loop
 (defun SBS-CALC-LOOP (TOP BOTTOM PINFO PW / COUNT PINFO WLENGTH PW RUNLENGTH BPOINTS TPOINTS FLAG DELTALENGTHB PLENGTH DELTALENGTHT)

@@ -15,77 +15,78 @@
 )
 
 ;;sets specified sys vars to values specified and returns the old values in a list
-(defun CWL-SVVCF ( sysvar / sysvar oldvar)
-	;;(print "start CWL-SVVCF")
-	(foreach var sysvar
-		(setq oldvar (append oldvar (list (list(nth 0 var) (getvar (nth 0 var))))))
+(defun CWL-SVVCF ( SYSVAR / SYSVAR OLDVAR)
+	(print "Start CWL-SVVCF")
+	(foreach var SYSVAR
+		(setq OLDVAR (append OLDVAR (list (list(nth 0 var) (getvar (nth 0 var))))))
 		(setvar (nth 0 var) (nth 1 var))
 	)
-	;;(print "end CWL-SVVCF")
-	oldvar
+	(print "End CWL-SVVCF")
+	OLDVAR
 )
 
 ;;locates and starts a dialogue specified and executes a function of the same name 
-(defun CWL-START-DIA ( DIA-Name DIA-M PassThrough / DIA-ID PassThrough DFlag)
-	;;(print (strcat "start CWL-START_DIA - " DIA-NAME))
-	(setq DIA-ID (load_dialog "SBS-Dialog.dcl"))
+(defun CWL-START-DIA ( DIA-NAME DIA-M PASSTHROUGH / DIA-ID PASSTHROUGH DFLAG)
+	(print (strcat "Start CWL-START_DIA - " DIA-NAME))
+	(setq DIA-ID (load_dialog (STRCAT DIA-NAME ".DCL")))
 	(cond
 		((= DIA-M "M")
-			(PROGN
-				(setq DFlag 2 )
-				(if (null PassThrough)
-					(setq PassThrough (list(list "DFlag" DFlag)))
-					(setq PassThrough (append (list PassThrough) (list(list "DFlag" DFlag))))
+			(progn
+				(setq DFLAG 2 )
+				(if (null PASSTHROUGH)
+					(setq PASSTHROUGH (list(list "Flag" DFLAG)))
+					;;(setq PASSTHROUGH (append (list PASSTHROUGH) (list(list "Flag" DFLAG))))
+					(subst (list "Flag" DFLAG) (assoc "Flag" PASSTHROUGH) PASSTHROUGH)
 				)
-				(while (>= DFlag 2)
-					(IF (NOT (new_dialog DIA-Name DIA-ID))
-						(EXIT)
-						(SETQ PassThrough (eval (list(read DIA-name) 'PassThrough)))
+				(while (>= DFLAG 2)
+					(if (not (new_dialog DIA-NAME DIA-ID))
+						(exit)
+						(setq PASSTHROUGH (eval (list(read DIA-NAME) 'PASSTHROUGH)))
 					)
-					(SETQ DFlag (CADR (assoc "DFlag" PassThrough)))
+					(setq DFLAG (cadr (assoc "Flag" PASSTHROUGH)))
 				)
 			)
 		)
 		((= DIA-M "S")
-			(IF (NOT (new_dialog DIA-Name DIA-ID))
-					(EXIT)
-					(eval (list(read DIA-name)))
+			(if (not (new_dialog DIA-NAME DIA-ID))
+					(exit)
+					(setq PASSTHROUGH (eval (list(read DIA-NAME) 'PASSTHROUGH)))
 			)
 		)
 	)
 	(unload_dialog DIA-ID)
-	;;(print (strcat "end CWL-START_DIA - " DIA-NAME))
-	(vl-remove (assoc "DFlag" PassThrough) Passthrough)
+	(print (strcat "End CWL-START_DIA - " DIA-NAME))
+	(vl-remove (assoc "Flag" PASSTHROUGH) PASSTHROUGH)
 )
 
 ;; extract points from a Polyline and returns a list of the points 
-(defun CWL-PPOINTS ( / Pline PPoints CK )
-	;;(print "start CWL-PPOINTS")
+(defun CWL-PPOINTS ( / PLINE PPOINTS CK )
+	(print "Start CWL-PPOINTS")
 	(while (/= CK "LWPOLYLINE")
-		(setq Pline (entget (car (entsel "Select Polyline:"))))
-		(setq CK (cdr (assoc 0 pline)))
+		(setq PLINE (entget (car (entsel "Select Polyline:"))))
+		(setq CK (cdr (assoc 0 PLINE)))
 		(if (/= CK "LWPOLYLINE")
 			(prompt "\rSelected Object is not a Polyline. ")
 		)
 	)
-	(foreach  p Pline
+	(foreach  p PLINE
 		(if (= (car p) 10)
 			(setq
-				PPoints (append PPoints (list (append (cdr p) (list (cdr (assoc 38 pline))))))
+				PPOINTS (append PPOINTS (list (append (cdr p) (list (cdr (assoc 38 PLINE))))))
 			)
 		)
 	)
-	(IF (= (cdr (assoc 70 pline)) 0)
-		(SETQ PPoints (CDR PPoints))
+	(IF (= (cdr (assoc 70 PLINE)) 0)
+		(SETQ PPOINTS (CDR PPOINTS))
 	)
-	;;(print "end CWL-PPOINTS")
-	PPoints
+	(print "End CWL-PPOINTS")
+	PPOINTS
 )
 
 ;;finds the extreme lower left or lower right points then resorts the list with this point as the first point
-(defun CWL-FPOINT ( PList SP / SList CNT PList SP e1 e2 TPOINT)
-	;;(PRINT "start CWL-FPOINT")
-	(SETQ Slist
+(defun CWL-FPOINT ( PLIST SP / SLIST CNT PLIST SP TPOINT)
+	(print "Start CWL-FPOINT")
+	(setq SLIST
 		(vl-sort-i PList
 			(function
 				(lambda (e1 e2)
@@ -97,54 +98,22 @@
 			)
 		)
 	)
-	(IF (= (CAR (NTH (CAR SList) PList)) (CAR (NTH (CADR SList) PList)))
-		(IF (>(CADR (NTH (CAR SList) PList)) (CADR (NTH (CADR SList) PList)))
-			(SETQ CNT (CADR SList))
-			(SETQ CNT (CAR SList))
+	(if (= (car (nth (car SLIST) PLIST)) (car (nth (cadr SLIST) PLIST)))
+		(if (>(cadr (nth (car SLIST) PLIST)) (cadr (nth (cadr SLIST) PLIST)))
+			(setq CNT (cadr SLIST))
+			(setq CNT (car SLIST))
 		)
-		(setq CNT (CAR SList))
+		(setq CNT (car SLIST))
 	)
-	(REPEAT CNT
-		(SETQ
-			TPOINT (LIST (CAR PLIST))
-			PLIST (CDR PLIST)
-			PLIST (APPEND PLIST TPOINT)
+	(repeat CNT
+		(setq
+			TPOINT (list (car PLIST))
+			PLIST (cdr PLIST)
+			PLIST (append PLIST TPOINT)
 		)
 	)
-	;;(PRINT "end CWL-FPOINT")
+	(print "End CWL-FPOINT")
 	PLIST
-)
-
-;;subtracts a list of points by the number specified with x,y,z
-(defun CWL-ALIST ( x1 y1 z1 Plist / pf x1 y1 z1 Plist )
-	;;(print "start CWL-ALIST")
-	(foreach p Plist
-		(setq pf (cons (list (- (car p) x1) (- (cadr p) y1) (- (caddr p) z1)) pf))
-	)
-	(setq pf (reverse pf))
-	;;(print "end CWL-ALIST")
-	pf
-)
-
-;;return 2 adjacent points in a list and loop to the first point if at the end of the list
-(defun CWL-2POINT (PLIST LOC / 2POINT PLIST LOC)
-	;;(print "start CWL-2POINT")
-	(IF (= (NTH (1+ LOC) PList) nil)
-		(SETQ 2POINT (LIST (NTH LOC PLIST)(CAR PLIST)))
-		(SETQ 2POINT (LIST (NTH LOC PLIST)(NTH (1+ LOC) PLIST)))
-	)
-	;;(print "end CWL-2POINT")
-	2Point
-)
-
-;;Reterns the Max and Min 'x' and 'y' of a givin point list (XMin XMax YMin YMax)
-(defun CWL-MAXPOINT ( Points / XL YL PointList Points)
-	;;(print "start CWL-MAXPOINT")
-	(SETQ XL (vl-sort-i Points (function (lambda (e1 e2) (< (car e1) (car e2))))))
-	(SETQ YL (vl-sort-i Points (function (lambda (e1 e2) (< (cadr e1) (cadr e2))))))
-	(setq PointList (list (car (nth (car XL) points))(car (nth (last XL) points))(cadr (nth (car YL) points))(cadr (nth (last YL) points))))
-	;;(print "end CWL-MAXPOINT")
-	PointList
 )
 
 ;;Creats a list from a table
@@ -161,7 +130,7 @@
 			(SETQ CLIST (APPEND (LIST RL) CLIST))
 		)
 		(SETQ POS (+ POS 2))
-		(if (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))
+		(if (vl-string-position (ASCII "\n") (substr INFO POS))
 			(SETQ POS (+ POS (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))))
 			(setq rl nil)
 		)
@@ -171,48 +140,55 @@
 )
 ;;Creates a list using a bit code and a table
 (defun CWL-BITTOLIST ( SBIT UTABLE / POS RL ELIST INFO )
-	;;(print "start CWL-BITTOLIST")
-	(SETQ 
-		INFO (VL-GET-RESOURCE UTABLE)
+	(print "Start CWL-BITTOLIST")
+	(IF (= SBIT "all")
+		(SETQ SBIT 2147483647)
+	)
+	(setq 
+		INFO (vl-get-resource UTABLE)
 		POS 1
 		RL " "
 	)
-	(WHILE (not (null RL))
-		(SETQ RL (read (substr INFO POS )))
-		(IF (AND (not (null RL)) (/= (LOGAND SBIT (car RL)) 0))
-			(SETQ ELIST (APPEND ELIST (LIST RL)))
+	(while (not (null RL))
+		(setq RL (read (substr INFO POS )))
+		(if (and (not (null RL)) (/= (logand SBIT (car RL)) 0))
+			(setq ELIST (append ELIST (list RL)))
 		)
-		(SETQ POS (+ POS 2))
-		(if (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))
-			(SETQ POS (+ POS (VL-STRING-POSITION (ASCII "\n") (substr INFO POS))))
+		(setq POS (+ POS 2))
+		(if (vl-string-position (ascii "\n") (substr INFO POS))
+			(setq POS (+ POS (vl-string-position (ascii "\n") (substr INFO POS))))
 			(setq rl nil)
 		)
 	)
-	;;(print "END CWL-BITTOLIST")
+	(print "End CWL-BITTOLIST")
 	ELIST
 )
 
 ;;populates a dialogue list from a list
-(defun CWL-DBLIST ( ELIST DIAKEY POSITION / DIAKEY ELIST )
-;;	(print (strcat "start CWL-DBLIST - " DIAKEY))
-	(START_LIST DIAKEY 2 0)
-		(MAPCAR 'ADD_LIST 
-			(MAPCAR 
-				'(LAMBDA (i)
-					(NTH POSITION i)
+(defun CWL-DBLIST ( ELIST DIAKEY POSITION / DIAKEY ELIST POSITION)
+	(print (strcat "Start CWL-DBLIST - " DIAKEY))
+	(start_list DIAKEY 2 0)
+		(add_list "")
+		(mapcar 'add_list 
+			(mapcar 
+				'(lambda (i)
+					(nth POSITION i)
 				)
 			ELIST)
 		)
-	(END_LIST)
-;;	(print (strcat "end CWL-DBLIST - " DIAKEY))
+	(end_list)
+	(print (strcat "End CWL-DBLIST - " DIAKEY))
 )
 
 ;; creates a list based on a set bit list and renters the position of an item in the list based off the first value of the item
-(DEFUN CWL-TILESET (BIT BITRANGE UTABLE / VALUE VLIST)
-;;(PRINT "START CWL-TILESET")
-	(SETQ VLIST (CWL-BITTOLIST BITRANGE UTABLE))
-	(SETQ VALUE (itoa (VL-POSITION (ASSOC BIT VLIST) VLIST)))
-;;(PRINT "END CWL-TILESET")
+(defun CWL-TILESET (BIT BITRANGE UTABLE / BIT BITRANGE UTABLE VALUE VLIST)
+(print "START CWL-TILESET")
+	(if (= BITRANGE "all")
+		(SETQ BITRANGE 214783647)
+	)
+	(setq VLIST (CWL-BITTOLIST BITRANGE UTABLE))
+	(setq VALUE (itoa (vl-position (assoc BIT VLIST) VLIST)))
+(print "END CWL-TILESET")
 VALUE
 )
 

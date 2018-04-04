@@ -76,7 +76,7 @@
 	)
 	(setq CC (STRCAT (NTH 0 RL) " " (NTH 1 RL)))
 	(setq acadObj (vlax-get-acad-object))
-	(setq FirstColour (vlax-create-object "AutoCAD.AcCmColor.21"))
+	(setq FirstColour (vlax-create-object "AutoCAD.AcCmColor.22"))
 	(PRINT FIRSTCOLOUR)
 	(print CC)
 	(vla-SetColorBookColor FirstColour "Steelway Cladding Colourbook" CC)
