@@ -224,7 +224,24 @@ VALUE
 	(LIST LLIST RLIST)
 )
 
+;;checks a list to see if it has a single item the sets the corisponding tile to that valu and turns it off 
+(defun CWL_LIST_LENGHT_CHECK ( ELIST DIAKEY POSITION / ELIST DIAKEY POSITION)
+(print "start CWL_LIST_LENGHT_CHECK")
+	(CWL-DBLIST ELIST DIAKEY POSITION)
+	(if (= (length ELIST) 1)
+		(progn
+			(set_tile DIAKEY "1")
+			(mode_tile DIAKEY 1)
+		)
+		(mode_tile DIAKEY 0)
+	)
+(print "end CWL_LIST_LENGHT_CHECK")
+)
+
+
+
 (DEFUN CWL_LISTRESET (RLIST / )
-(START_LIST RLIST 3 )
-(END_LIST)
+(print "ass")
+;;(START_LIST RLIST 3 )
+;;(END_LIST)
 )

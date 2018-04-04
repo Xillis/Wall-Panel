@@ -9,6 +9,12 @@ SBS_PANEL : dialog {
 				edit_width = 13;
 			}
 		}
+			:column {
+				:button {
+					label = "Pick Panel";
+					key = "PPanel";
+				}
+			}
 	}
 	ok_cancel;
 }

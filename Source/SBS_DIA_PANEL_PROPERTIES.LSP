@@ -16,14 +16,15 @@
 	(print "End SBS-PANEL-INFO")
 	PASSTHROUGH
 )
+
 ;; panel selection dialog Box
 (defun SBS_PANEL ( PANEL-INFO / PANEL-INFO TOKEN)
 (print "Start SBS_PANEL")
 	(CWL-DBLIST (CWL-BITTOLIST "all" "SBS-PANEL-INFO") "Panel_type" 1)
 	(action_tile "Panel_type" "(setq TOKEN (nth (1-(atoi $value)) (CWL-BITTOLIST \"all\" \"SBS-PANEL-INFO\")))")
 	(action_tile "accept" "(setq PANEL-INFO (list \"Panel info\" (car TOKEN))) (done_dialog)")
+	(mode_tile "PPanel" 1)
 	(start_dialog)
-	(PRINT TOKEN)
 (print "End SBS_PANEL")
 (list PANEL-INFO)
 )
@@ -41,11 +42,45 @@
 			"SBS-PANEL-INFO"
 		))))
 	)
-	(mode_tile "OtherColour" 1)
+	(CWL_LIST_LENGHT_CHECK 
+		(CWL-BITTOLIST
+			(car (nth 3 (car (CWL-BITTOLIST (cadr PANEL-INFO) "SBS-PANEL-INFO" ))))
+			(strcase (nth 1 (car (CWL-BITTOLIST (cadr PANEL-INFO) "SBS-PANEL-INFO" ))))
+		)
+		"Width"
+		1
+	)
+	(CWL_LIST_LENGHT_CHECK 
+		(CWL-BITTOLIST
+			(cadr (nth 3 (car (CWL-BITTOLIST (cadr PANEL-INFO) "SBS-PANEL-INFO" ))))
+			(strcase (nth 1 (car (CWL-BITTOLIST (cadr PANEL-INFO) "SBS-PANEL-INFO" ))))
+		)
+		"Gauge"
+		1
+	)
+	(CWL_LIST_LENGHT_CHECK
+		(CWL-BITTOLIST
+			(caddr (nth 3 (car (CWL-BITTOLIST (cadr PANEL-INFO) "SBS-PANEL-INFO" ))))
+			(strcase (nth 1 (car (CWL-BITTOLIST (cadr PANEL-INFO) "SBS-PANEL-INFO" ))))
+		)
+		"Profile"
+		1
+	)
+	(SBS_GET_BIT)
 	(action_tile "Panel_type" "(setq VALUE $value) (done_dialog 2)")
+	(action_tile "Width"
+		"(SBS_GET_BIT)"
+	)
+	(action_tile "Gauge"
+		"(SBS_GET_BIT)"
+	)
+	(action_tile "Profile"
+		"(SBS_GET_BIT)"
+	)
 	(action_tile "accept"
 		(strcat
 			"(print \"Accept\")"
+			"(SBS_GET_BIT)"
 			"(done_dialog 1)"
 		)
 	)
@@ -58,13 +93,43 @@
 	(setq DFLAG (start_dialog))
 	(cond
 		((= DFLAG 2)
-			(print (NTH (READ VALUE) (CWL-BITTOLIST 2147483647 "SBS-PANEL-INFO"))))
+			(print (NTH (READ VALUE) (CWL-BITTOLIST "all" "SBS-PANEL-INFO"))))
 		(T (PRINT "SHIT"))
 	)
 			
 	(print (subst (list "Flag" DFLAG) (assoc "Flag" PASSTHROUGH) PASSTHROUGH))
 	(print "end SBS_STD_PANEL")
 	(subst (list "Flag" DFLAG) (assoc "Flag" PASSTHROUGH) PASSTHROUGH)
+)
+
+;;Gather tile values and generate panel designation bit
+(defun SBS_GET_BIT (/ BIT PANEL)
+(print "Start SBS_GET_BIT")
+	(setq PANEL (nth (1-(atoi (get_tile "Panel_type"))) (CWL-BITTOLIST "all" "SBS-PANEL-INFO")))
+	(setq BIT (+
+		(car PANEL)
+		(if (/= (get_tile "Width") "0")
+			(car (nth (1-(atoi (get_tile "Width"))) (CWL-BITTOLIST (car (nth 3 PANEL)) (cadr PANEL))))
+			0
+		)
+		(if (/= (get_tile "Profile") "0")
+			(car (nth (1-(atoi (get_tile "Profile"))) (CWL-BITTOLIST (caddr (nth 3 PANEL)) (cadr PANEL))))
+			0
+		)
+	))
+	(if (assoc BIT (CWL-BITTOLIST "all" "SBS-PANEL-ID"))
+		(set_tile "PPID" (cadr (assoc BIT (CWL-BITTOLIST "all" "SBS-PANEL-ID"))))
+		(set_tile "PPID" "")
+	)
+	(setq BIT (+
+		(if (/= (get_tile "Gauge") "0")
+			(car (nth (1-(atoi (get_tile "Gauge"))) (CWL-BITTOLIST (cadr (nth 3 PANEL)) (cadr PANEL))))
+			0
+		)
+		BIT
+	))
+(print "End SBS_GET_BIT")
+BIT
 )
 
 
