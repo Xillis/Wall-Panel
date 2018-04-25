@@ -1,6 +1,6 @@
 ;;wall creation function for Steelway building systems
 (defun C:SBS-INSERT-WALL-PANEL (/ OLDVAR PASSTHROUGH )
-	(print "Start SBS-WP")
+	;;(print "Start SBS-WP")
 	(setq OLDVAR (CWL-SVVCF (list '("CMDECHO" 0) ;|'("OSMODE" 16384)|;)))
 	(setq PASSTHROUGH (CWL-START-DIA "SBS_DIA_WALL_PROPERTIES" "M" nil))
 	(if (/= (cadr (assoc '"Wall Points" PASSTHROUGH)) nil)
@@ -11,13 +11,13 @@
 			(print "Operation Canceled")
 	)
 	(CWL-SVVCF OLDVAR)
-	(print "End SBS-WP")
+	;;(print "End SBS-WP")
 	(princ)
 )
 
 ;;main wall calculation function
 (defun SBS-WALL-PANEL-CALC ( PASSTHROUGH / PASSTHROUGH SPOINTS TOP BOTTOM PINFO OLDVAR SP PW)
-	(print "Start SBS-WALL-PANEL-CALC")
+	;;(print "Start SBS-WALL-PANEL-CALC")
 	(setq OLDVAR (CWL-SVVCF (list '("OSMODE" 16384))))
 	(setq SPOINTS (SBS-POINT-SPLIT (cadr (assoc "Wall Points" PASSTHROUGH))))
 	(setq
@@ -37,12 +37,12 @@
 		(T (SBS-CALC-LOOP TOP BOTTOM PINFO (atoi (cadr (cadr PINFO)))))
 	)
 	(CWL-SVVCF OLDVAR)
-	(print "End SBS-WALL-PANEL-CALC")
+	;;(print "End SBS-WALL-PANEL-CALC")
 )
 
 ;;Splits the wall polyline in to roof points and floor points. outputs list ((RoofL "points") (FloorL "points") 
 (defun SBS-POINT-SPLIT ( POINTLIST / POINTLIST TEMPP RP TPOINTS BPOINTS COMBLIST)
-	(print "Start CWL_POINT_SPLIT")
+	;;(print "Start CWL_POINT_SPLIT")
 	(if (> (cadr (cadr POINTLIST)) (cadr (last POINTLIST)))
 		(setq
 			TEMPP (list (car POINTLIST))
@@ -71,13 +71,13 @@
 			(setq COMBLIST (SBS-PS-COMBLIST TPOINTS BPOINTS))
 		)
 	)
-	(print "End CWL_POINT_SPLIT")
+	;;(print "End CWL_POINT_SPLIT")
 	COMBLIST
 )
 
 ;;sorts the wall point based on orgin to be sorted from the left
 (defun SBS-PS-FIXLEFT ( TPOINTS BPOINTS / TPOINTS BPOINTS COMBLIST )
-	(print "Start SBS-PS-FIXLEFT")
+	;;(print "Start SBS-PS-FIXLEFT")
 	(if (< (car (car TPOINTS)) (car (car BPOINTS)))
 		(setq BPOINTS (append (list (car TPOINTS)) BPOINTS))	
 		(setq TPOINTS (append (list (car BPOINTS)) TPOINTS))
@@ -89,20 +89,20 @@
 
 ;;sorts the wall point based on orgin to be sorted from the right
 (defun SBS-PS-FIXRIGHT ( TPOINTS BPOINTS / TPOINTS BPOINTS COMBLIST )
-	(print "Start SBS-PS-FIXRIGHT")
+	;;(print "Start SBS-PS-FIXRIGHT")
 	(if (> (car (last TPOINTS)) (car (last BPOINTS)))
 		(setq BPOINTS (append BPOINTS (list (last TPOINTS))))
 		(setq TPOINTS (append TPOINTS (list (last BPOINTS))))
 	)
 	(setq COMBLIST (SBS-PS-COMBLIST TPOINTS BPOINTS))
-	(print "End SBS-PS-FIXRIGHT")
+	;;(print "End SBS-PS-FIXRIGHT")
 	COMBLIST
 )
 
 ;;combines the sorted wall points in a list
 (defun SBS-PS-COMBLIST ( TPOINTS BPOINTS / TPOINTS BPOINTS COMBLIST )
-	(print "Start SBS-PS-COMBLIST")
+	;;(print "Start SBS-PS-COMBLIST")
 	(setq COMBLIST (list (list 'Top TPOINTS) (list  'Bottom BPOINTS)))
-	(print "End SBS-PS-COMBLIST")
+	;;(print "End SBS-PS-COMBLIST")
 	COMBLIST
 )

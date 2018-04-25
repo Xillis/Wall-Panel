@@ -16,18 +16,18 @@
 
 ;;sets specified sys vars to values specified and returns the old values in a list
 (defun CWL-SVVCF ( SYSVAR / SYSVAR OLDVAR)
-	(print "Start CWL-SVVCF")
+	;;(print "Start CWL-SVVCF")
 	(foreach var SYSVAR
 		(setq OLDVAR (append OLDVAR (list (list(nth 0 var) (getvar (nth 0 var))))))
 		(setvar (nth 0 var) (nth 1 var))
 	)
-	(print "End CWL-SVVCF")
+	;;(print "End CWL-SVVCF")
 	OLDVAR
 )
 
 ;;locates and starts a dialogue specified and executes a function of the same name 
 (defun CWL-START-DIA ( DIA-NAME DIA-M PASSTHROUGH / DIA-ID PASSTHROUGH DFLAG)
-	(print (strcat "Start CWL-START_DIA - " DIA-NAME))
+	;;(print (strcat "Start CWL-START_DIA - " DIA-NAME))
 	(setq DIA-ID (load_dialog (STRCAT DIA-NAME ".DCL")))
 	(cond
 		((= DIA-M "M")
@@ -55,13 +55,13 @@
 		)
 	)
 	(unload_dialog DIA-ID)
-	(print (strcat "End CWL-START_DIA - " DIA-NAME))
+	;;(print (strcat "End CWL-START_DIA - " DIA-NAME))
 	(vl-remove (assoc "Flag" PASSTHROUGH) PASSTHROUGH)
 )
 
 ;; extract points from a Polyline and returns a list of the points 
 (defun CWL-PPOINTS ( / PLINE PPOINTS CK )
-	(print "Start CWL-PPOINTS")
+	;;(print "Start CWL-PPOINTS")
 	(while (/= CK "LWPOLYLINE")
 		(setq PLINE (entget (car (entsel "Select Polyline:"))))
 		(setq CK (cdr (assoc 0 PLINE)))
@@ -79,13 +79,13 @@
 	(IF (= (cdr (assoc 70 PLINE)) 0)
 		(SETQ PPOINTS (CDR PPOINTS))
 	)
-	(print "End CWL-PPOINTS")
+	;;(print "End CWL-PPOINTS")
 	PPOINTS
 )
 
 ;;finds the extreme lower left or lower right points then resorts the list with this point as the first point
 (defun CWL-FPOINT ( PLIST SP / SLIST CNT PLIST SP TPOINT)
-	(print "Start CWL-FPOINT")
+	;;(print "Start CWL-FPOINT")
 	(setq SLIST
 		(vl-sort-i PList
 			(function
@@ -112,7 +112,7 @@
 			PLIST (append PLIST TPOINT)
 		)
 	)
-	(print "End CWL-FPOINT")
+	;;(print "End CWL-FPOINT")
 	PLIST
 )
 
@@ -140,7 +140,7 @@
 )
 ;;Creates a list using a bit code and a table
 (defun CWL-BITTOLIST ( SBIT UTABLE / POS RL ELIST INFO )
-	(print "Start CWL-BITTOLIST")
+	;;(print "Start CWL-BITTOLIST")
 	(IF (= SBIT "all")
 		(SETQ SBIT 2147483647)
 	)
@@ -160,15 +160,17 @@
 			(setq rl nil)
 		)
 	)
-	(print "End CWL-BITTOLIST")
+	;;(print "End CWL-BITTOLIST")
 	ELIST
 )
 
 ;;populates a dialogue list from a list
-(defun CWL-DBLIST ( ELIST DIAKEY POSITION / DIAKEY ELIST POSITION)
-	(print (strcat "Start CWL-DBLIST - " DIAKEY))
-	(start_list DIAKEY 2 0)
-		(add_list "")
+(defun CWL-DBLIST ( ELIST DIAKEY POSITION SPACE / DIAKEY ELIST POSITION)
+	;;(print (strcat "Start CWL-DBLIST - " DIAKEY))
+	(start_list DIAKEY)
+		(if (= space "s")
+			(add_list "")
+		)
 		(mapcar 'add_list 
 			(mapcar 
 				'(lambda (i)
@@ -177,18 +179,20 @@
 			ELIST)
 		)
 	(end_list)
-	(print (strcat "End CWL-DBLIST - " DIAKEY))
+	;;(print (strcat "End CWL-DBLIST - " DIAKEY))
 )
 
 ;; creates a list based on a set bit list and renters the position of an item in the list based off the first value of the item
 (defun CWL-TILESET (BIT BITRANGE UTABLE / BIT BITRANGE UTABLE VALUE VLIST)
-(print "START CWL-TILESET")
+;;(print "START CWL-TILESET")
 	(if (= BITRANGE "all")
 		(SETQ BITRANGE 214783647)
 	)
 	(setq VLIST (CWL-BITTOLIST BITRANGE UTABLE))
-	(setq VALUE (itoa (vl-position (assoc BIT VLIST) VLIST)))
-(print "END CWL-TILESET")
+	(if (not (null (vl-position (assoc BIT VLIST) VLIST)))
+		(setq VALUE (itoa (vl-position (assoc BIT VLIST) VLIST)))
+	)
+;;(print "END CWL-TILESET")
 VALUE
 )
 
@@ -226,8 +230,8 @@ VALUE
 
 ;;checks a list to see if it has a single item the sets the corisponding tile to that valu and turns it off 
 (defun CWL_LIST_LENGHT_CHECK ( ELIST DIAKEY POSITION / ELIST DIAKEY POSITION)
-(print "start CWL_LIST_LENGHT_CHECK")
-	(CWL-DBLIST ELIST DIAKEY POSITION)
+;;(print "start CWL_LIST_LENGHT_CHECK")
+	(CWL-DBLIST ELIST DIAKEY POSITION "s")
 	(if (= (length ELIST) 1)
 		(progn
 			(set_tile DIAKEY "1")
@@ -235,13 +239,25 @@ VALUE
 		)
 		(mode_tile DIAKEY 0)
 	)
-(print "end CWL_LIST_LENGHT_CHECK")
+;;(print "end CWL_LIST_LENGHT_CHECK")
 )
 
+;;RTERNS A LIST OF NUMBERS FRON A STRING OF NUMBERS
+(defun CWL_NUMSTRING_LIST (NSTRING / NLIST NSTRING)
+;;(print "start CWL_NUMSTRING_LIST")
+(while (not (= NSTRING ""))
+	(setq 
+		NLIST (append NLIST (list (read NSTRING)))
+		NSTRING (vl-string-left-trim (STRCAT (itoa (read NSTRING)) " ") NSTRING)
+	)
+)
+;;(print "end CWL_NUMSTRING_LIST")
+NLIST
+)
 
 
 (DEFUN CWL_LISTRESET (RLIST / )
 (print "ass")
-;;(START_LIST RLIST 3 )
+(START_LIST RLIST 1)
 ;;(END_LIST)
 )
