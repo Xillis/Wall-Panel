@@ -1,7 +1,7 @@
 ;;Panal dialog inishilaization 
 (defun SBS_PANEL_INFO ( PASSTHROUGH / PANEL-INFO PASSTHROUGH)
 	;;(print "Start SBS-PANEL-INFO")
-	(if (null (setq PANEL-INFO (cadr (assoc "Panel info" PASSTHROUGH))))
+	(if (null (setq PANEL-INFO (assoc "Panel info" PASSTHROUGH)))
 		(setq PANEL-INFO (car (CWL-START-DIA "SBS_PANEL" "S" PANEL-INFO)))
 	)
 	(if (not (null PANEL-INFO)) 
@@ -12,9 +12,12 @@
 				(list PANEL-INFO)
 			)
 		)
-	)
+	) 
 	;;(print "End SBS-PANEL-INFO")
-	PASSTHROUGH
+	(if (assoc "Panel info" PASSTHROUGH)
+		(subst (car PANEL-INFO) (assoc "Panel info" PASSTHROUGH) PASSTHROUGH)
+		(cons (car PANEL-INFO) PASSTHROUGH)
+	)
 )
 
 ;; panel selection dialog Box
@@ -30,22 +33,21 @@
 )
 
 ;;Panel information collection dialog Box
-(defun SBS_STD_PANEL ( PANEL-INFO / PANEL-INFO MASK )
+(defun SBS_STD_PANEL ( PANEL-INFO / PANEL-INFO MASK DFLAG)
 	(print "Start SBS_STD_PANEL")
 	(setq PANEL-INFO (car PANEL-INFO))
 	(CWL-DBLIST (CWL-BITTOLIST "all" "SBS-PANEL-INFO") "Panel_type" 1 "s")
 	(set_tile "Panel_type"
 		(itoa (1+ (atoi (CWL-TILESET
-			(cadr PANEL-INFO)
+			(logand (cadr PANEL-INFO) 255)
 			"all"
 			"SBS-PANEL-INFO"
 		))))
 	)
-	(PRINT PANEL-INFO)
 	(setq MASK
 		(SBS_SET_LIST 
 			(SBS_GET_BIT MASK)
-			(cadddr (nth (1- (cadr PANEL-INFO)) (CWL-BITTOLIST "all" "SBS-PANEL-INFO")))
+			(cadddr (nth (1- (logand (cadr PANEL-INFO) 255)) (CWL-BITTOLIST "all" "SBS-PANEL-INFO")))
 		)
 	)
 	(action_tile "Panel_type" "(setq VALUE $value) (done_dialog 2)")
@@ -72,7 +74,7 @@
 	(action_tile "accept"
 		(strcat
 			"(print \"Accept\")"
-			"(SBS_GET_BIT)"
+			"(setq PANEL-INFO (list \"Panel info\" (SBS_GET_BIT MASK)))"
 			"(done_dialog 1)"
 		)
 	)
@@ -83,15 +85,8 @@
 		)
 	)
 	(setq DFLAG (start_dialog))
-	(cond
-		((= DFLAG 2)
-			(print (NTH (READ VALUE) (CWL-BITTOLIST "all" "SBS-PANEL-INFO"))))
-		(T (PRINT "SHIT"))
-	)
-			
-	(print (subst (list "Flag" DFLAG) (assoc "Flag" PASSTHROUGH) PASSTHROUGH))
 	(print "end SBS_STD_PANEL")
-	(subst (list "Flag" DFLAG) (assoc "Flag" PASSTHROUGH) PASSTHROUGH)
+	(cons (list "Flag" DFLAG) (list PANEL-INFO))
 )
 
 ;;Gather tile values and generate panel designation bit
