@@ -136,7 +136,7 @@
 		)
 	)
 	;;(print "END CWL-CLIST")
-	CLIST
+	(REVERSE CLIST)
 )
 ;;Creates a list using a bit code and a table
 (defun CWL-BITTOLIST ( SBIT UTABLE / POS RL ELIST INFO )

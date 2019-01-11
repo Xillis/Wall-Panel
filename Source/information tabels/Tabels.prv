@@ -1,4 +1,4 @@
-;;; Visual LISP make file [V1.0] Tabels saved to:[C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/information tabels] at:[4/4/18] 
+;;; Visual LISP make file [V1.0] Tabels saved to:[C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/information tabels] at:[10/1/18] 
 (PRV-DEF (:target . "Tabels.VLX")
 	 (:active-x . T)
 	 (:separate-namespace)
@@ -6,6 +6,7 @@
 	 (:load-file-list)
 	 (:require-file-list
 	   (:txt "Colour_Chart.SBS")
+	   (:txt "DIAMONDSEAL.SBS")
 	   (:txt "SBS-PANEL-ID.SBS")
 	   (:txt "SBS-PANEL-INFO.SBS")
 	   (:txt "STORMSEAL.SBS")

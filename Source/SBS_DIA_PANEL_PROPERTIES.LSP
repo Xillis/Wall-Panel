@@ -33,144 +33,55 @@
 )
 
 ;;Panel information collection dialog Box
-(defun SBS_STD_PANEL ( PANEL-INFO / PANEL-INFO MASK DFLAG)
-	(print "Start SBS_STD_PANEL")
-	(setq PANEL-INFO (car PANEL-INFO))
-	(CWL-DBLIST (CWL-BITTOLIST "all" "SBS-PANEL-INFO") "Panel_type" 1 "s")
-	(set_tile "Panel_type"
-		(itoa (1+ (atoi (CWL-TILESET
-			(logand (cadr PANEL-INFO) 255)
-			"all"
-			"SBS-PANEL-INFO"
-		))))
-	)
-	(setq MASK
-		(SBS_SET_LIST 
-			(SBS_GET_BIT MASK)
-			(cadddr (nth (1- (logand (cadr PANEL-INFO) 255)) (CWL-BITTOLIST "all" "SBS-PANEL-INFO")))
-		)
-	)
-	(action_tile "Panel_type" "(setq VALUE $value) (done_dialog 2)")
-	(action_tile "Width"
-		(strcat
-			"(setq MASK (SBS_SET_LIST (SBS_GET_BIT MASK) MASK))"
-		)
-	)
-	(action_tile "Gauge"
-		(strcat
-			"(setq MASK (SBS_SET_LIST (SBS_GET_BIT MASK) MASK))"
-		)
-	)
-	(action_tile "Profile"
-		(strcat
-			"(setq MASK (SBS_SET_LIST (SBS_GET_BIT MASK) MASK))"
-		)
-	)
-	(action_tile "Feature_list"
-		(strcat
-			"(setq MASK (SBS_SET_LIST (SBS_GET_BIT MASK) MASK))"
-		)
-	)
-	(action_tile "accept"
-		(strcat
-			"(print \"Accept\")"
-			"(setq PANEL-INFO (list \"Panel info\" (SBS_GET_BIT MASK)))"
-			"(done_dialog 1)"
-		)
-	)
-	(action_tile "Cancel"
-		(strcat 
-			"(print \"cancel\")"
-			"(done_dialog 0)"
-		)
-	)
+(defun SBS_STD_PANEL ( PANEL-INFO / PANEL-TYPE COUNT MASK DFLAG)
+(print "Start SBS_STD_PANEL")
+	(setq PANEL-TYPE (car (CWL-BITTOLIST (cadr (car PANEL-INFO)) "SBS-PANEL-INFO")))
+	(SBS_LIST_SET "Panel_type" (car PANEL-TYPE) "all" "SBS-PANEL-INFO")
+	(SBS_RESET_LIST '("Width" "Gauge" "Profile") (nth 3 PANEL-TYPE) (cadr PANEL-TYPE) (cadr (car PANEL-INFO)))
+	(SBS_RESET_LIST '("Colour") (nth 4 PANEL-TYPE) "COLOUR_CHART" 0)
+	(SBS_RESET_LIST '("Feature_list") (nth 3 (nth 4 PANEL-TYPE)) (cadr PANEL-TYPE) (cadr (car PANEL-INFO)))
 	(setq DFLAG (start_dialog))
-	(print "end SBS_STD_PANEL")
+(print "end SBS_STD_PANEL")
 	(cons (list "Flag" DFLAG) (list PANEL-INFO))
 )
-
-;;Gather tile values and generate panel designation bit
-(defun SBS_GET_BIT ( MASK / BIT PANEL COUNT)
-;;(print "Start SBS_GET_BIT")
-	(setq PANEL (nth (1-(atoi (get_tile "Panel_type"))) (CWL-BITTOLIST "all" "SBS-PANEL-INFO")))
-	(setq BIT (car PANEL)
-		COUNT 0
-	)
-	(foreach x '("Width" "Gauge" "Profile")
-		(if (and (/= (get_tile x) "0") (/= (get_tile x) ""))
-			(setq BIT (+ BIT (car (nth (1-(atoi (get_tile x))) (CWL-BITTOLIST (nth COUNT MASK) (cadr PANEL))))))
-		)
-		(setq COUNT (1+ COUNT))
-	)
-	(foreach i (CWL_NUMSTRING_LIST (get_tile "Feature_list"))
-		(setq BIT (+ (car (nth i (CWL-BITTOLIST (nth COUNT MASK) (cadr PANEL)))) BIT))
-	)
-;;(print "End SBS_GET_BIT")
-BIT
-)
-
-;;populates dropdown list boxes
-(defun 	SBS_SET_LIST ( PANEL-BIT MASK-OLD / PANEL-BIT MASK PANEL COUNT FTLIST MASKBIT)
-;;(print "Start SBS_SET_LIST")
-	(setq PANEL (car (CWL-BITTOLIST PANEL-BIT "SBS-PANEL-INFO")))
-	(setq MASKBIT 0)
-	(foreach x (CWL-BITTOLIST PANEL-BIT (cadr PANEL))
-		(if (not (null (caddr x)))
-			(setq  MASKBIT (boole 7 (car (caddr x)) MASKBIT))
-		)
-	)
-	(setq MASK 
-		(if (null MASKBIT)
-			(cadddr PANEL)
+;;resets a list of lists for dialogs
+(defun SBS_RESET_LIST (TILE-LIST MASK-LIST DATA-LIST PANEL-BIT / COUNT )
+(PRINT TILE-LIST)
+	(COND
+		((= (CAR TILE-LIST) "Colour")
+		(start_list (CAR TILE-LIST))
+		(mapcar 'add_list 
 			(mapcar 
-				'(lambda (x)
-					(boole 2 x MASKBIT)
+				'(lambda (i)
+					(strcat (cadr i) " " (caddr i))
 				)
-				(cadddr PANEL)
+				(CWL-BITTOLIST	(car MASK-LIST) "Colour_Chart")
 			)
 		)
-		COUNT 0
-	)
-	(foreach x '("Width" "Gauge" "Profile")
-		(CWL_LIST_LENGHT_CHECK (CWL-BITTOLIST (nth COUNT MASK) (strcase (cadr PANEL))) x 1)
-		(if (/= (logand panel-bit (nth COUNT MASK-OLD)) 0)
-			(set_tile x (itoa (1+ (atoi (CWL-TILESET (logand panel-bit (nth COUNT MASK-OLD)) (nth COUNT MASK) (cadr PANEL))))))
+		(end_list)
 		)
-		(setq COUNT (1+ COUNT))
-	)
-	(CWL-DBLIST (CWL-BITTOLIST (nth COUNT MASK) (strcase (cadr PANEL)))  "Feature_list" 1 "n")
-	(foreach x (CWL-BITTOLIST (logand panel-bit (nth COUNT MASK-OLD)) (strcase (cadr PANEL)))
-		(if (null FTLIST)
-			(setq FTLIST (CWL-TILESET (car x) (nth COUNT MASK) (cadr PANEL)))
-			(setq FTLIST (strcat(CWL-TILESET (car x) (nth COUNT MASK) (cadr PANEL)) " " FTLIST))
+		((= (CAR TILE-LIST) "Feature_list")
+		(CWL_DBLIST (CWL-BITTOLIST MASK-LIST DATA-LIST) (car TILE-LIST) 1 )
+		)
+		(t 	(setq COUNT 0)
+			(foreach x TILE-LIST
+				(SBS_LIST_SET x (logand PANEL-BIT (nth COUNT MASK-LIST)) (nth COUNT MASK-LIST) DATA-LIST)
+				(SETQ COUNT (1+ COUNT))
+			)
 		)
 	)
-	(if (not (null FTLIST))
-		(set_tile "Feature_list" FTLIST)
-	)
-	(SBS_PPID_LIST (boole 2 PANEL-BIT (cadr (cadddr PANEL))))
-;;(print "End SBS_SET_LIST")
-MASK
 )
 
-;;PPID List generation
-(defun SBS_PPID_LIST (SBIT / SBIT INFO POS RL)
-	;;(print "start SBS_PPID_LIST")
-	(setq 
-		INFO (vl-get-resource "SBS-PANEL-ID")
-		POS 1
-		RL " "
-	)
-	(while (not (null RL))
-		(setq RL (read (substr INFO POS )))
-		(if (= SBIT (car RL))
-			(set_tile "PPID" (cadr RL))
-		)
-		(setq POS (+ POS 2))
-		(if (vl-string-position (ascii "\n") (substr INFO POS))
-			(setq POS (+ POS (vl-string-position (ascii "\n") (substr INFO POS))))
-			(setq RL nil)
+
+;;generates a dropdown list and sets it to a value is Valu bit is provided
+(defun SBS_LIST_SET (TILE-MARK SET-BIT MASK-BIT LIST-DATA / )
+(print "start SBS_LIST_SET")
+	(CWL_LIST_LENGHT_CHECK (CWL-BITTOLIST MASK-BIT LIST-DATA) TILE-MARK 1 )
+	(PRINT SET-BIT)
+	(if (not (zerop SET-BIT))
+		(set_tile TILE-MARK
+			(itoa (1+ (atoi (CWL-TILESET SET-BIT MASK-BIT LIST-DATA))))
 		)
 	)
-	;;(print "end SBS_PPID_LIST")
+(print "end SBS_LIST_SET")
 )
