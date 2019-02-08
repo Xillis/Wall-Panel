@@ -1,5 +1,5 @@
 ("StormSeal" ("36") ("26" "24") ("NRO" "WRO") 1 ("WALL" "ROOF" "WLINER" "RLINER"))
-("StrucSeal" ("36" "30") ("26" "24") ("NRO" "WRO") 2 ("WALL" "ROOF"))
+("StrucSeal" ("36" "30") ("26" "24") ("WRO" "NRO") 2 ("WALL" "ROOF"))
 ("DiamondSeal" ("36") ("29" "26" "24") ("NRO" "WRO") 4 ("WALL" "WLINER" "RLINER"))
 ("VersaSeal" ("36") ("29" "26" "24") ("NRO") 8 ("WALL" "ROOF" "WLINER" "RLINER")) 
 ("RTL-24" ("24") ("24" "22") ("NRO") 16 ("ROOF"))

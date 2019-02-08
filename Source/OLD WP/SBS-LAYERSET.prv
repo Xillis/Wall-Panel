@@ -1,0 +1,39 @@
+;;; Visual LISP make file [V1.0] SBS-LAYERSET saved to:[X:/Autocad/Lisp Routines] at:[1/15/19] 
+(PRV-DEF
+  (:target . "SBS-LAYERSET.VLX")
+  (:active-x . T)
+  (:separate-namespace)
+  (:protected . T)
+  (:load-file-list
+    (:lsp
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/OLD WP/old-Wall Panels.lsp"
+    )
+    (:lsp
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/OLD WP/tmp-Tools.lsp"
+    )
+  )
+  (:require-file-list
+    (:DCL
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/OLD WP/OLD-SBS-Dialog.DCL"
+    )
+    (:txt
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/OLD WP/Information tables/Colour_Chart.SBS"
+    )
+    (:txt
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/OLD WP/Information tables/COLOUR_MATRIX.SBS"
+    )
+    (:txt
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/OLD WP/Information tables/FEATURES-BITLIST.SBS"
+    )
+    (:txt
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/OLD WP/Information tables/Panel_Finishes.SBS"
+    )
+    (:txt
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/OLD WP/Information tables/Panel_Properties.SBS"
+    )
+  )
+  (:ob-directory)
+  (:tmp-directory)
+  (:optimization . st)
+)
+;; EOF
