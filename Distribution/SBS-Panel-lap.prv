@@ -1,0 +1,17 @@
+;;; Visual LISP make file [V1.0] SBS-Panel-lap saved to:[C:/Users/clarkl/Documents/GitHub/Wall-Panel/Distribution] at:[6/19/19] 
+(PRV-DEF
+  (:target . "SBS-Panel-lap.VLX")
+  (:active-x . T)
+  (:separate-namespace)
+  (:protected . T)
+  (:load-file-list
+    (:lsp
+      "C:/Users/clarkl/Documents/GitHub/Wall-Panel/Source/SBS-PANEL-SPLICE.lsp"
+    )
+  )
+  (:require-file-list)
+  (:ob-directory)
+  (:tmp-directory)
+  (:optimization . lsa)
+)
+;; EOF
