@@ -12,6 +12,7 @@
   (princ "error: ")
   (princ msg)
  (princ)
+ (vl-bt)
 )
 
 ;;sets specified sys vars to values specified and returns the old values in a list

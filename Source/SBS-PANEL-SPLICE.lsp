@@ -70,7 +70,7 @@
 	(setq MODE (strcase (getkword "\nGirt toe Up or Down? ")))
 	;;set variables for routine execution
 	(setq OLDVAR (~CWL-SVVCF (list '("CMDECHO" 0) '("OSMODE" 16384))))
-	(command-s "zoom" "e")
+	;;(command-s "zoom" "e")
 	;;exicute loop of items in selectionset
 	(while (/= NIL(setq PANEL (ssname PANEL-SS INDEX)))
 		(command "ucs" "ob" (ssname PANEL-SS INDEX)) ;;set ucs to ss object
@@ -113,7 +113,7 @@
 	)
 	;;close loop
 	;;reset zoom and ucs stat
-	(command-s "zoom" "p")
+	;;(command-s "zoom" "p")
 	(command-s "ucs" "na" "r" "pstemp")
 	(command-s "ucs" "na" "d" "pstemp")
 	;;reset variables

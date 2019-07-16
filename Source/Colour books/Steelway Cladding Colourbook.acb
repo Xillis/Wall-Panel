@@ -1,41 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <colorBook>
     <bookName>Steelway Cladding Colourbook</bookName>
-    <colorPage>
-        <pageColor>
-            <RGB8>
-                <red>101</red>
-                <green>34</green>
-                <blue>0</blue>
-            </RGB8>
-        </pageColor>
-        <colorEntry>
-            <colorName>QC8011 Burgundy</colorName>
-            <RGB8>
-                <red>101</red>
-                <green>34</green>
-                <blue>0</blue>
-            </RGB8>
-        </colorEntry>
-    </colorPage>
-    <colorPage>
-        <pageColor>
-            <RGB8>
-                <red>178</red>
-                <green>169</green>
-                <blue>125</blue>
-            </RGB8>
-        </pageColor>
-        <colorEntry>
-            <colorName>QC8129 Pebble Khaki</colorName>
-            <RGB8>
-                <red>178</red>
-                <green>169</green>
-                <blue>125</blue>
-            </RGB8>
-        </colorEntry>
-    </colorPage>
-    <colorPage>
+	<colorPage>
         <pageColor>
             <RGB8>
                 <red>52</red>
@@ -49,6 +15,176 @@
                 <red>52</red>
                 <green>35</green>
                 <blue>0</blue>
+            </RGB8>
+        </colorEntry>
+    </colorPage>
+    <colorPage>
+        <pageColor>
+            <RGB8>
+                <red>92</red>
+                <green>112</green>
+                <blue>118</blue>
+            </RGB8>
+        </pageColor>
+        <colorEntry>
+            <colorName>QC8260 Slate Blue</colorName>
+            <RGB8>
+                <red>92</red>
+                <green>112</green>
+                <blue>118</blue>
+            </RGB8>
+        </colorEntry>
+    </colorPage>
+	<colorPage>
+        <pageColor>
+            <RGB8>
+                <red>240</red>
+                <green>236</green>
+                <blue>231</blue>
+            </RGB8>
+        </pageColor>
+        <colorEntry>
+            <colorName>QC8273 Bone White</colorName>
+            <RGB8>
+                <red>240</red>
+                <green>236</green>
+                <blue>231</blue>
+            </RGB8>
+        </colorEntry>
+    </colorPage>
+	<colorPage>
+        <pageColor>
+            <RGB8>
+                <red>204</red>
+                <green>194</green>
+                <blue>176</blue>
+            </RGB8>
+        </pageColor>
+        <colorEntry>
+            <colorName>QC8305 Stone Grey</colorName>
+            <RGB8>
+                <red>204</red>
+                <green>194</green>
+                <blue>176</blue>
+            </RGB8>
+        </colorEntry>
+    </colorPage>
+	<colorPage>
+        <pageColor>
+            <RGB8>
+                <red>58</red>
+                <green>52</green>
+                <blue>46</blue>
+            </RGB8>
+        </pageColor>
+        <colorEntry>
+            <colorName>QC8306 Charcoal</colorName>
+            <RGB8>
+                <red>58</red>
+                <green>52</green>
+                <blue>46</blue>
+            </RGB8>
+        </colorEntry>
+    </colorPage>
+	<colorPage>
+        <pageColor>
+            <RGB8>
+                <red>202</red>
+                <green>174</green>
+                <blue>138</blue>
+            </RGB8>
+        </pageColor>
+        <colorEntry>
+            <colorName>QC8315 Tan</colorName>
+            <RGB8>
+                <red>202</red>
+                <green>174</green>
+                <blue>138</blue>
+            </RGB8>
+        </colorEntry>
+    </colorPage>
+    <colorPage>
+        <pageColor>
+            <RGB8>
+                <red>242</red>
+                <green>242</green>
+                <blue>243</blue>
+            </RGB8>
+        </pageColor>
+        <colorEntry>
+            <colorName>QC8317 White White</colorName>
+            <RGB8>
+                <red>242</red>
+                <green>242</green>
+                <blue>243</blue>
+            </RGB8>
+        </colorEntry>
+    </colorPage>	
+    <colorPage>
+        <pageColor>
+            <RGB8>
+                <red>58</red>
+                <green>40</green>
+                <blue>0</blue>
+            </RGB8>
+        </pageColor>
+        <colorEntry>
+            <colorName>QC8326 Coffee</colorName>
+            <RGB8>
+                <red>58</red>
+                <green>40</green>
+                <blue>0</blue>
+            </RGB8>
+        </colorEntry>
+    </colorPage>	
+    <colorPage>
+        <pageColor>
+            <RGB8>
+                <red>173</red>
+                <green>174</green>
+                <blue>178</blue>
+            </RGB8>
+        </pageColor>
+        <colorEntry>
+            <colorName>QC8730 Regent Grey</colorName>
+            <RGB8>
+                <red>173</red>
+                <green>174</green>
+                <blue>178</blue>
+            </RGB8>
+        </colorEntry>
+    </colorPage>	
+	<colorPage>
+        <pageColor>
+            <RGB8>
+                <red>251</red>
+                <green>251</green>
+                <blue>251</blue>
+            </RGB8>
+        </pageColor>
+        <colorEntry>
+            <colorName>QC8783 Bright White</colorName>
+            <RGB8>
+                <red>251</red>
+                <green>251</green>
+                <blue>251</blue>
+            </RGB8>
+        </colorEntry>
+    </colorPage>
+	<colorPage>
+        <pageColor>
+            <RGB8>
+                <red>178</red>
+                <green>169</green>
+                <blue>125</blue>
+            </RGB8>
+        </pageColor>
+        <colorEntry>
+            <colorName>QC8129 Pebble Khaki</colorName>
+            <RGB8>
+                <red>178</red>
+                <green>169</green>
+                <blue>125</blue>
             </RGB8>
         </colorEntry>
     </colorPage>
@@ -89,23 +225,6 @@
     <colorPage>
         <pageColor>
             <RGB8>
-                <red>92</red>
-                <green>112</green>
-                <blue>118</blue>
-            </RGB8>
-        </pageColor>
-        <colorEntry>
-            <colorName>QC8260 Slate Blue</colorName>
-            <RGB8>
-                <red>92</red>
-                <green>112</green>
-                <blue>118</blue>
-            </RGB8>
-        </colorEntry>
-    </colorPage>
-    <colorPage>
-        <pageColor>
-            <RGB8>
                 <red>0</red>
                 <green>0</green>
                 <blue>0</blue>
@@ -117,74 +236,6 @@
                 <red>0</red>
                 <green>0</green>
                 <blue>0</blue>
-            </RGB8>
-        </colorEntry>
-    </colorPage>
-    <colorPage>
-        <pageColor>
-            <RGB8>
-                <red>240</red>
-                <green>236</green>
-                <blue>231</blue>
-            </RGB8>
-        </pageColor>
-        <colorEntry>
-            <colorName>QC8273 Bone White</colorName>
-            <RGB8>
-                <red>240</red>
-                <green>236</green>
-                <blue>231</blue>
-            </RGB8>
-        </colorEntry>
-    </colorPage>
-    <colorPage>
-        <pageColor>
-            <RGB8>
-                <red>199</red>
-                <green>138</green>
-                <blue>32</blue>
-            </RGB8>
-        </pageColor>
-        <colorEntry>
-            <colorName>QC8276 Gold</colorName>
-            <RGB8>
-                <red>199</red>
-                <green>138</green>
-                <blue>32</blue>
-            </RGB8>
-        </colorEntry>
-    </colorPage>
-    <colorPage>
-        <pageColor>
-            <RGB8>
-                <red>204</red>
-                <green>194</green>
-                <blue>176</blue>
-            </RGB8>
-        </pageColor>
-        <colorEntry>
-            <colorName>QC8305 Stone Grey</colorName>
-            <RGB8>
-                <red>204</red>
-                <green>194</green>
-                <blue>176</blue>
-            </RGB8>
-        </colorEntry>
-    </colorPage>
-    <colorPage>
-        <pageColor>
-            <RGB8>
-                <red>58</red>
-                <green>52</green>
-                <blue>46</blue>
-            </RGB8>
-        </pageColor>
-        <colorEntry>
-            <colorName>QC8306 Charcoal</colorName>
-            <RGB8>
-                <red>58</red>
-                <green>52</green>
-                <blue>46</blue>
             </RGB8>
         </colorEntry>
     </colorPage>
@@ -208,64 +259,13 @@
     <colorPage>
         <pageColor>
             <RGB8>
-                <red>202</red>
-                <green>174</green>
-                <blue>138</blue>
-            </RGB8>
-        </pageColor>
-        <colorEntry>
-            <colorName>QC8315 Tan</colorName>
-            <RGB8>
-                <red>202</red>
-                <green>174</green>
-                <blue>138</blue>
-            </RGB8>
-        </colorEntry>
-    </colorPage>
-    <colorPage>
-        <pageColor>
-            <RGB8>
-                <red>242</red>
-                <green>242</green>
-                <blue>243</blue>
-            </RGB8>
-        </pageColor>
-        <colorEntry>
-            <colorName>QC8317 White White</colorName>
-            <RGB8>
-                <red>242</red>
-                <green>242</green>
-                <blue>243</blue>
-            </RGB8>
-        </colorEntry>
-    </colorPage>
-    <colorPage>
-        <pageColor>
-            <RGB8>
-                <red>58</red>
-                <green>40</green>
-                <blue>0</blue>
-            </RGB8>
-        </pageColor>
-        <colorEntry>
-            <colorName>QC8326 Coffee Brown</colorName>
-            <RGB8>
-                <red>58</red>
-                <green>40</green>
-                <blue>0</blue>
-            </RGB8>
-        </colorEntry>
-    </colorPage>
-    <colorPage>
-        <pageColor>
-            <RGB8>
                 <red>0</red>
                 <green>85</green>
                 <blue>48</blue>
             </RGB8>
         </pageColor>
         <colorEntry>
-            <colorName>QC8329 Medium Green</colorName>
+            <colorName>QC8329 Green</colorName>
             <RGB8>
                 <red>0</red>
                 <green>85</green>
@@ -289,25 +289,8 @@
                 <blue>70</blue>
             </RGB8>
         </colorEntry>
-    </colorPage>
-    <colorPage>
-        <pageColor>
-            <RGB8>
-                <red>151</red>
-                <green>7</green>
-                <blue>0</blue>
-            </RGB8>
-        </pageColor>
-        <colorEntry>
-            <colorName>QC8386 Bright Red</colorName>
-            <RGB8>
-                <red>151</red>
-                <green>7</green>
-                <blue>0</blue>
-            </RGB8>
-        </colorEntry>
-    </colorPage>
-    <colorPage>
+    </colorPage>    
+	<colorPage>
         <pageColor>
             <RGB8>
                 <red>248</red>
@@ -327,40 +310,6 @@
     <colorPage>
         <pageColor>
             <RGB8>
-                <red>173</red>
-                <green>174</green>
-                <blue>178</blue>
-            </RGB8>
-        </pageColor>
-        <colorEntry>
-            <colorName>QC8730 Regent Grey</colorName>
-            <RGB8>
-                <red>173</red>
-                <green>174</green>
-                <blue>178</blue>
-            </RGB8>
-        </colorEntry>
-    </colorPage>
-    <colorPage>
-        <pageColor>
-            <RGB8>
-                <red>251</red>
-                <green>251</green>
-                <blue>251</blue>
-            </RGB8>
-        </pageColor>
-        <colorEntry>
-            <colorName>QC8783 Bright White</colorName>
-            <RGB8>
-                <red>251</red>
-                <green>251</green>
-                <blue>251</blue>
-            </RGB8>
-        </colorEntry>
-    </colorPage>
-    <colorPage>
-        <pageColor>
-            <RGB8>
                 <red>243</red>
                 <green>243</green>
                 <blue>244</blue>
@@ -372,6 +321,43 @@
                 <red>243</red>
                 <green>243</green>
                 <blue>244</blue>
+            </RGB8>
+        </colorEntry>
+    </colorPage>	
+<colorPage>
+        <pageColor>
+            <RGB8>
+                <red>151</red>
+                <green>7</green>
+                <blue>0</blue>
+            </RGB8>
+        </pageColor>
+        <colorEntry>
+            <colorName>QC60034 Chocolate Brown</colorName>
+            <RGB8>
+                <red>151</red>
+                <green>7</green>
+                <blue>0</blue>
+            </RGB8>
+        </colorEntry>
+    </colorPage>
+
+
+
+    <colorPage>
+        <pageColor>
+            <RGB8>
+                <red>151</red>
+                <green>7</green>
+                <blue>0</blue>
+            </RGB8>
+        </pageColor>
+        <colorEntry>
+            <colorName>QC8386 Bright Red</colorName>
+            <RGB8>
+                <red>151</red>
+                <green>7</green>
+                <blue>0</blue>
             </RGB8>
         </colorEntry>
     </colorPage>
