@@ -1,5 +1,5 @@
 (defun C:SBS-WP-SPLIT ( / POS PANELS-SS INDEX P1x P2x ~Change_Panel_Length ~CWL-SVVCF OLDVAR FirstColour NEWPANEL PANEL MODE BPOINT TRIGER)
-	(Prompt "C:SBS-WP-SPLIT V1.0.0")
+	(Prompt "C:SBS-WP-SPLIT V1.0.1")
 	;;Define error handling 
 	(defun *error* (msg)
 		(vl-bt)
@@ -61,7 +61,7 @@
 	)
 	;;Define sub routine to cahnge the panel Propertis
 	(defun ~Change_Panel_Prop (CPP-PANEL TEMPLATE-PANEL / )
-		(foreach x '("COLOUR" "PART" "PROFILE" "GAUGE")
+		(foreach x '("COLOUR" "PART" "PROFILE" "GAUGE" "MARK")
 			(setpropertyvalue CPP-PANEL x (getpropertyvalue TEMPLATE-PANEL x))
 		)
 	)
